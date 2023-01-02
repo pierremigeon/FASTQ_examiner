@@ -1,11 +1,13 @@
 # FASTQ_examiner
-## A tool to check validity of FASTQ files, correct if necessary, and produce basic summary charts and statistics for these
+### A tool to filter and produce summary statistics and charts for FASTQ files
+
+### Status update: As of 1/2/23 I've begun fiddling around with this code again. My objective is to shift to using python as my primary language, since both C and Perl are a bit outdated at this point.
 
 *tool in developement...*
 
-FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. First, files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequent to these steps, summary statistics and graphs for the input files are produced. 
+FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. First, files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequent to these steps, summary statistics and graphs for the input files are produced.
 
-usage: 
+usage:
 	fastq_looker.py [-h] -f1 FASTQ_1 [-f2 FASTQ_2] [-i]
 
 
