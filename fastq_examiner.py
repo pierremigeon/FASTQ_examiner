@@ -65,7 +65,7 @@ def plot_total_ns(N_count):
 
 def plot_number_of_x_length(lens, max_len, file_name):
 	plt.xlabel("Length of Read")
-        plt.ylabel("Number of Reads")
+	plt.ylabel("Number of Reads")
 	plt.plot(lens[0:max_len + 2], color = 'blue') #, linestyle='dash_dot')
 	plt.title("Read Length Distribution for %s" % os.path.basename(file_name))
 	plt.grid()
@@ -131,10 +131,8 @@ def percent_gc(seqs, file_plots):
 		if (file_plots):
 			plot_percent_gc(nucleotides[i], max_len, seqs[i][0]["filename"])
 
-
 def plot_quality_by_base(sum):
 	plt.plot(sum)
-
 
 def average_qual(qual, encoding):
 	len = len(qual)
@@ -148,18 +146,18 @@ def average_qual(qual, encoding):
 	return (qual / len)
 
 def get_encoding(seqs):
-                min = '~'
-                max = '!'
-                for entry in range(len(seqs)):
-                        for char in seqs[entry]["qual"]:
-                                if char < min:
-                                        min = char
-                                if char > max:
-                                        max = char
-                if min < ':' or max < k:
-			return (33)
-                elif max > k:
-                        return (64)
+	min = '~'
+	max = '!'
+	for entry in range(len(seqs)):
+		for char in seqs[entry]["qual"]:
+			if char < min:
+				min = char
+			if char > max:
+				max = char
+			if min < ':' or max < k:
+				return (33)
+			elif max > k:
+				return (64)
 
 def quality_by_base(seqs, print_num):
 	sum = np.zeros((45,), dtype=int)
@@ -176,7 +174,7 @@ def run_graphs(files, print_num, seqs):
 	total_ns = np.zeros((1500,), dtype=float)
 	for file in files:
 		total_ns += summarize_ns(file, print_num)
-        plot_total_ns(total_ns)
+	plot_total_ns(total_ns)
 	#rename this function- percent by base
 	percent_gc(seqs, print_num)
 	number_of_x_length(seqs, print_num)
@@ -213,7 +211,7 @@ def get_header(file_name):
 	file = open(file_name, 'r')
 	first_line = file.readline()
 	if len(first_line) < 2:
-		print "Minimal information stored in the header line... Possible bugs ahead. You may want to reformat headerlines."
+		print("Minimal information stored in the header line... Possible bugs ahead. You may want to reformat headerlines.")
 	seq_line = file.readline()
 	x = 0
 	if len(seq_line) == len(first_line):
@@ -309,8 +307,8 @@ def as_read(dict_entry):
 		str += "\n"
 	if "plus" in dict_entry:
 		str += dict_entry["plus"]
-        if "qual" in dict_entry:
-                str += dict_entry["qual"]
+	if "qual" in dict_entry:
+		str += dict_entry["qual"]
 		str += "\n"
 	return (str)
 
