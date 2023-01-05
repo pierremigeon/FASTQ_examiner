@@ -1,15 +1,15 @@
 # FASTQ_examiner
-## A tool to filter and produce summary statistics and charts for FASTQ files
+### A tool to filter and produce summary statistics and charts for FASTQ files
 
-### Status update: As of 1/2/23 I've begun fiddling around with this code again. My objective is to shift to using python as my primary language, since both C and Perl are a bit outdated at this point.
+#### Status update: As of 1/2/23 I've begun fiddling around with this code again. My objective is to shift to using python as my primary language, since both C and Perl are a bit outdated at this point.
 
 *tool in developement...*
 
 FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. Files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequently, sequence read summary statistics and graphs are produced.
 
-'''
+```
 usage:	fastq_looker.py [-h] -f1 FASTQ_1 [-f2 FASTQ_2] [-i]
-'''
+```
 
 Diagnostic graphs produced can be useful for understanding fastq data quality or other status. For example, extreme 5' nucleotide bias in this case suggests sequencing adapters have yet to be removed:
 ![graph](https://user-images.githubusercontent.com/8321639/70365885-95504880-1848-11ea-9321-5fb1756d2e7f.png)
