@@ -22,6 +22,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import textwrap
 #############################################
 ##     Summary stats and plots go here
 #############################################
@@ -434,25 +435,27 @@ def main():
 #  Parse command line arguements 
 #################################
 	parser = argparse.ArgumentParser(
-					description='This is a script to check \
-						the validity of FASTQ files, to \
-						possibly correct formating errors, \
-						and subsequently to produce summary \
-						statistics about the FASTQ files\
-						(for instance, the user may be\
-						interested in examining files \
-						before and after cleaning...)',
-					)
-	parser.add_argument('-c', help='correct invalid files')
-	parser.add_argument('-v', help='check validity of files and then exit')
-	parser.add_argument('-f1', '--forward', dest='fastq_1', help='The path to the first fastq', required=True)
-	parser.add_argument('-f2', '--reverse', dest='fastq_2', help='The path to the second fastq', required=False)
-	parser.add_argument('-i', '--plot_individual', dest='plot_num', help='produce individual summary plots', required=False, action='store_true')
+		add_help = False,
+		formatter_class = lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position = 80),
+		description="""Description: Check the validity of FASTQ files, correct formating errors, and produce summary statistics.""", 
+		epilog="Created by Pierre Migeon, updated winter 2023"
+		)
+	help_arguments = parser.add_argument_group('help arguments')
+	help_arguments.add_argument('-h', '--help', action='help', help='\tshow this help message and exit.')
+	help_arguments.add_argument('-v', '--version', action='version', help='\tshow the current program version.')
+	help_arguments.add_argument('-e', '--email', help='\tsend an email to the program author')
+	parser.add_argument('-f1', '--forward', dest='fastq_1', help="""\tThe path to the first fastq""", required=True)
+	parser.add_argument('-f2', '--reverse', dest='fastq_2', help="""\tThe path to the second fastq""", required=False)
+	parser.add_argument('-c', help="""\tcorrect invalid files""")
+	parser.add_argument('-q', help="""\tcheck validity of files and then exit""")
+	parser.add_argument('-i', '--plot_individual', dest='plot_num', help="""\tproduce individual summary plots""", required=False, action='store_true')
+	if '-h' or '--help' in sys.argv:
+		print("")
 	args = parser.parse_args()
-
-######################################
-#  Open files
-######################################
+	
+	######################################
+	#  Open files
+	######################################
 	files = []
 	forward_file = args.fastq_1
 	files.append(forward_file)
