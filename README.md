@@ -1,21 +1,20 @@
 # FASTQ_examiner
-### A tool to filter and produce summary statistics and charts for FASTQ files
+## A tool to filter and produce summary statistics and charts for FASTQ files
 
 ### Status update: As of 1/2/23 I've begun fiddling around with this code again. My objective is to shift to using python as my primary language, since both C and Perl are a bit outdated at this point.
 
 *tool in developement...*
 
-FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. First, files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequent to these steps, summary statistics and graphs for the input files are produced.
+FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. Files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequently, sequence read summary statistics and graphs are produced.
 
-usage:
-	fastq_looker.py [-h] -f1 FASTQ_1 [-f2 FASTQ_2] [-i]
-
+'''
+usage:	fastq_looker.py [-h] -f1 FASTQ_1 [-f2 FASTQ_2] [-i]
+'''
 
 Diagnostic graphs produced can be useful for understanding fastq data quality or other status. For example, extreme 5' nucleotide bias in this case suggests sequencing adapters have yet to be removed:
 ![graph](https://user-images.githubusercontent.com/8321639/70365885-95504880-1848-11ea-9321-5fb1756d2e7f.png)
 
-
-I used this tool to quickly make some random fastq files to play with during development:
+I used the following tool to quickly make some random fastq files to play with during development:
 M. Frampton, R. Houlston (2012) Generation of Artificial FASTQ Files to Evaluate the Performance of Next-Generation Sequencing Pipelines.
 *PLoS ONE* 7 (11), http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0049110
 
