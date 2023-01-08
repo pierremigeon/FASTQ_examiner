@@ -133,18 +133,19 @@ def percent_gc(seqs, file_plots):
 			plot_percent_gc(nucleotides[i], max_len, seqs[i][0]["filename"])
 
 def plot_quality_by_base(sum):
-	plt.plot(sum)
+	plt.plot(sum[0:], color = 'blue')
+	plt.show()
 
-def average_qual(qual, encoding):
-	len = len(qual)
-	qual = 0
+def average_qual(qual_str, encoding):
+	length = len(qual_str)
+	qual_int = 0
 	if encoding == 33:
 		base = ord('!')
 	else:
 		base = ord('@')
-	for char in qual:
-		qual += ord(char) - ord('!')
-	return (qual / len)
+	for char in qual_str:
+		qual_int += ord(char) - base
+	return (int(qual_int / length + 0.5))
 
 def get_encoding(seqs):
 	min = '~'
@@ -163,9 +164,9 @@ def get_encoding(seqs):
 def quality_by_base(seqs, print_num):
 	sum = np.zeros((45,), dtype=int)
 	for file in range(len(seqs)):
-		encoding = get_encoding(seqs["file"])
+		encoding = get_encoding(seqs[file])
 		for entry in range(len(seqs[file])):
-			sum[average_qual(seqs[file][entry]["qual"]), encoding] += 1
+			sum[average_qual(seqs[file][entry]["qual"], encoding)] += 1
 		plot_quality_by_base(sum)
 
 ######################################
@@ -236,6 +237,8 @@ def unwrap(file_name):
 	header = re.compile(header)
 	file = open(file_name, 'r')
 	out_path = "./out/" + os.path.splitext(os.path.basename(file_name))[0] + ".unwrapped.fastq"
+	if not os.path.exists(out_path):
+		os.makedirs(out_path)	 
 	out = open(out_path, 'w')
 	growing_line = ""
 	i = 0
@@ -316,6 +319,8 @@ def as_read(dict_entry):
 def check_truncated(seqs):
 	line_0 = re.compile('^@.*')
 	line_2 = re.compile('^\+')
+	if not os.path.exists("./out"):
+		os.makedirs("./out");
 	outfile = open("./out/truncated_reads.fastq", 'w')
 	removed = 0
 	for i in range(len(seqs)):
