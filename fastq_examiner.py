@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
-
-"""
-I have just now begun to learn python. It seems fun and straightforward. 
-
-"""
-
-#############################################
+#############################################@
+#@
+#	A program to assess FASTQ format
+#	correctness and assess fastq quality.
 #
-#  A program to assess FASTQ format
-#  correctness and assess fastq quality. 
+#	Also written as an exercise in order to learn Python.
+#	Created by Pierre Migeon
 #
-#  Also written in order to learn Python.
-#  Created by Pierre Migeon
-#
-#  Usage: fastq_looker.py -f1 file_1.fq [-f2 file_2.fq] 
-#
-#############################################
+#	Usage: fastq_examiner.py [-h] [-v] [-e EMAIL] -f1 FASTQ_1 [-f2 FASTQ_2] [-c C] [-q Q] [-i]
+#	./fastq_examiner.py --help for more detailed usage
+#@
+#############################################@
 import sys
 import re
 import argparse
@@ -47,29 +42,35 @@ def summarize_ns(file_name, plot_number):
 			i = -1
 		i += 1
 	if plot_number:
-		plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'blue') #linestyle='dashed')
+		plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #linestyle='dashed')
 		plt.xlabel("Position in Read")
 		plt.ylabel("Percent N")
 		plt.title("%%N by length of read for %s" % os.path.basename(file_name))
-		plt.grid()
+		plt.minorticks_on()
+		plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+		plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 		plt.show()
 	return(N_count)
 
 def plot_total_ns(N_count):
 	max_length = N_count.argmin()
-	plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'blue') #, linestyle='dashed')
+	plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #, linestyle='dashed')
 	plt.xlabel("Position in Read")
 	plt.ylabel("Percent N")
 	plt.title("%N by length of read cumulative for all files")
-	plt.grid()
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
 def plot_number_of_x_length(lens, max_len, file_name):
 	plt.xlabel("Length of Read")
 	plt.ylabel("Number of Reads")
-	plt.plot(lens[0:max_len + 2], color = 'blue') #, linestyle='dash_dot')
+	plt.plot(lens[0:max_len + 2], color = 'mediumblue') #, linestyle='dash_dot')
 	plt.title("Read Length Distribution for %s" % os.path.basename(file_name))
-	plt.grid()
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
 #This function plots the length distribution for the reads.
@@ -90,8 +91,12 @@ def number_of_x_length(seqs, file_plots):
 
 def polish_arrays(nucleotides, max_len):
 	for letter in nucleotides:
+		if max_len not in range(len(nucleotides[letter])) :
+			max_len = len(nucleotides[letter]) 
+	for letter in nucleotides:
 		while len(nucleotides[letter]) < max_len:
 			nucleotides[letter] = np.append(nucleotides[letter], 0)
+			max_len += 1
 
 def plot_percent_gc(nucleotides, max_len, file_name):
 	sum = np.zeros((max_len,), dtype=float)
@@ -101,13 +106,15 @@ def plot_percent_gc(nucleotides, max_len, file_name):
 		nucleotides[letter] /= sum
 	plt.xlabel("Position in Read")
 	plt.ylabel("Proportion of Base")
-	plt.title("Proportion of Each Base by Position in Read in %s" % os.path.basename(file_name))
+	plt.title("Base Composition By Read Position For %s" % os.path.basename(file_name))
 	plt.plot(nucleotides["A"][0:max_len], color = 'red')
-	plt.plot(nucleotides["T"][0:max_len], color = 'blue')
+	plt.plot(nucleotides["T"][0:max_len], color = 'mediumblue')
 	plt.plot(nucleotides["C"][0:max_len], color = 'yellow')
 	plt.plot(nucleotides["G"][0:max_len], color = 'green')
 	plt.legend(["A", "T", "C", "G"])
-	plt.grid()
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
 # Might consider converting all characters to 
@@ -117,23 +124,32 @@ def plot_percent_gc(nucleotides, max_len, file_name):
 # You need to do one for the files cumulatively here as well.
 def percent_gc(seqs, file_plots):
 	nucleotides = []
-	max_len = 0
+	nucleotides.append({"A" : np.array([], 'f'), "T" : np.array([], 'f'), "C" : np.array([], 'f'), "G" : np.array([], 'f'), "N" : np.array([], 'f')})
 	for i in (range(len(seqs))):
 		nucleotides.append({"A" : np.array([], 'f'), "T" : np.array([], 'f'), "C" : np.array([], 'f'), "G" : np.array([], 'f'), "N" : np.array([], 'f')})
+		max_len = 0
 		for j in (range(len(seqs[i]))):
 			x = 0
 			for letter in seqs[i][j]["seq"]:
 				while x not in range(len(nucleotides[i][letter])):
 					nucleotides[i][letter] = np.append(nucleotides[i][letter], 0)
 				nucleotides[i][letter][x] += 1
+				nucleotides[0][letter][x] += 1
 				x += 1
 				if x > max_len:
 					max_len = x
-		if (file_plots):
+		if (file_plots and len(nucleotides) > 1):
 			plot_percent_gc(nucleotides[i], max_len, seqs[i][0]["filename"])
+	plot_percent_gc(nucleotides[0], max_len, "All Files")
 
-def plot_quality_by_base(sum):
-	plt.plot(sum[0:], color = 'blue')
+def plot_quality_by_base(sum, file_name):
+	plt.plot(sum[0:], color = 'mediumblue', linewidth=2)
+	plt.title("Count of Reads Per Quality Score for %s" % os.path.basename(file_name))
+	plt.xlabel("Quality Score")
+	plt.ylabel("Number of Reads")
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
 def average_qual(qual_str, encoding):
@@ -167,7 +183,7 @@ def quality_by_base(seqs, print_num):
 		encoding = get_encoding(seqs[file])
 		for entry in range(len(seqs[file])):
 			sum[average_qual(seqs[file][entry]["qual"], encoding)] += 1
-		plot_quality_by_base(sum)
+		plot_quality_by_base(sum, seqs[file][0]["filename"])
 
 ######################################
 #  	Run Quality Graphs
@@ -358,7 +374,7 @@ def run_checks(files, seqs):
 			print ("%s included wrapped text. The file will automatically be unwrapped" % file)
 		i = check_truncated(seqs)
 		if i:
-                	print ("%s was truncated in some way. %i Truncated entries were automatically removed" % (file, i))
+                	print ("%i reads in %s were truncated. %i Truncated entries saved in ./out" % (i, file, i))
 
 
 #############################################
@@ -443,7 +459,8 @@ def main():
 		add_help = False,
 		formatter_class = lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position = 80),
 		description="""Description: Check the validity of FASTQ files, correct formating errors, and produce summary statistics.""", 
-		epilog="Created by Pierre Migeon, updated winter 2023"
+		epilog="""Created by Pierre Migeon, updated winter 2023
+		\n"""
 		)
 	help_arguments = parser.add_argument_group('help arguments')
 	help_arguments.add_argument('-h', '--help', action='help', help='\tshow this help message and exit.')
