@@ -18,6 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import textwrap
+import pdb
 #############################################
 ##     Summary stats and plots go here
 #############################################
@@ -90,13 +91,12 @@ def number_of_x_length(seqs, file_plots):
 	plot_number_of_x_length(t_lens, max_len, "All Files")
 
 def polish_arrays(nucleotides, max_len):
-	for letter in nucleotides:
-		if max_len not in range(len(nucleotides[letter])) :
-			max_len = len(nucleotides[letter]) 
-	for letter in nucleotides:
-		while len(nucleotides[letter]) < max_len:
-			nucleotides[letter] = np.append(nucleotides[letter], 0)
-			max_len += 1
+	for base in nucleotides:
+		if max_len not in range(len(nucleotides[base])):
+			max_len = len(nucleotides[base])
+	for base in nucleotides:
+		while len(nucleotides[base]) < max_len:
+			nucleotides[base] = np.append(nucleotides[base], 0)
 
 def plot_percent_gc(nucleotides, max_len, file_name):
 	sum = np.zeros((max_len,), dtype=float)
@@ -117,30 +117,38 @@ def plot_percent_gc(nucleotides, max_len, file_name):
 	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
+def make_nucleotides(length):
+	nucleotides = [] 
+	nucleotides.append({"A" : np.zeros(length), "T" : np.zeros(length), "C" : np.zeros(length), "G" : np.zeros(length), "N" : np.zeros(length)})
+	return nucleotides
+
 # Might consider converting all characters to 
 # uppercase during intake of files, in case you
 # run into fastq files with lowercase, would
 # break this graph. Unlikely edge case but still
 # You need to do one for the files cumulatively here as well.
 def percent_gc(seqs, file_plots):
-	nucleotides = []
-	nucleotides.append({"A" : np.array([], 'f'), "T" : np.array([], 'f'), "C" : np.array([], 'f'), "G" : np.array([], 'f'), "N" : np.array([], 'f')})
+	#pdb.set_trace()
+	nucleotides = make_nucleotides(len(seqs[0][0]["seq"]))
 	for i in (range(len(seqs))):
-		nucleotides.append({"A" : np.array([], 'f'), "T" : np.array([], 'f'), "C" : np.array([], 'f'), "G" : np.array([], 'f'), "N" : np.array([], 'f')})
+		nucleotides += make_nucleotides(len(seqs[0][0]))
 		max_len = 0
 		for j in (range(len(seqs[i]))):
 			x = 0
 			for letter in seqs[i][j]["seq"]:
-				while x not in range(len(nucleotides[i][letter])):
-					nucleotides[i][letter] = np.append(nucleotides[i][letter], 0)
-				nucleotides[i][letter][x] += 1
+				while x not in range(len(nucleotides[i + 1][letter])):
+					nucleotides[i + 1][letter] = np.append(nucleotides[i + 1][letter], 0)
+				nucleotides[i + 1][letter][x] += 1
+				while x not in range(len(nucleotides[0][letter])):
+					nucleotides[0][letter] = np.append(nucleotides[0][letter], 0)
 				nucleotides[0][letter][x] += 1
 				x += 1
 				if x > max_len:
 					max_len = x
-		if (file_plots and len(nucleotides) > 1):
-			plot_percent_gc(nucleotides[i], max_len, seqs[i][0]["filename"])
-	plot_percent_gc(nucleotides[0], max_len, "All Files")
+		if file_plots or len(nucleotides) == 1:
+			plot_percent_gc(nucleotides[i + 1], max_len, seqs[i][0]["filename"])
+	if (len(nucleotides) > 2):
+		plot_percent_gc(nucleotides[0], max_len, "All Files")
 
 def plot_quality_by_base(sum, file_name):
 	plt.plot(sum[0:], color = 'mediumblue', linewidth=2)
