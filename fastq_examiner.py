@@ -20,10 +20,9 @@ import os
 import textwrap
 import pdb
 #############################################
-##     Summary stats and plots go here
+## %N Basecalls / Base Graph Functions
 #############################################
 #This is to summarize the bases where Ns were found.
-#I am assuming that you aren't getting reads that are longer than 750 bp.
 def summarize_ns(file_name, plot_number):
 	N_count = np.zeros((1500,), dtype=float)
 	max_length = 0;
@@ -64,6 +63,9 @@ def plot_total_ns(N_count):
 	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 	plt.show()
 
+##########################################################
+#  Number / Total Read Length Graph Functions
+##########################################################
 def plot_number_of_x_length(lens, max_len, file_name):
 	plt.xlabel("Length of Read")
 	plt.ylabel("Number of Reads")
@@ -90,20 +92,31 @@ def number_of_x_length(seqs, file_plots):
 			plot_number_of_x_length(lens, max_len, seqs[i][0]["filename"])
 	plot_number_of_x_length(t_lens, max_len, "All Files")
 
+
+######################################
+#  %GC / Base Graph Functions
+######################################
 def polish_arrays(nucleotides, max_len):
-	for base in nucleotides:
-		if max_len not in range(len(nucleotides[base])):
-			max_len = len(nucleotides[base])
-	for base in nucleotides:
-		while len(nucleotides[base]) < max_len:
-			nucleotides[base] = np.append(nucleotides[base], 0)
+	for base_1 in nucleotides:
+		if max_len < len(nucleotides[base_1]):
+			max_len = len(nucleotides[base_1])
+	for base_2 in nucleotides:
+		while len(nucleotides[base_2]) < max_len:
+			nucleotides[base_2] = np.append(nucleotides[base_2], 0)
+
+def trim_array_ends(array):
+	while [array[i][-1] for i in array] == [0,0,0,0,0]:
+		for i, x in enumerate(array):
+			array[x] = array[x][:-1]			
 
 def plot_percent_gc(nucleotides, max_len, file_name):
-	sum = np.zeros((max_len,), dtype=float)
+	#sum = np.zeros((max_len,), dtype=float)
 	polish_arrays(nucleotides, max_len)
-	sum = nucleotides["A"] + nucleotides["T"] + nucleotides["C"] + nucleotides["G"] + nucleotides["N"]
+	sums = sum(nucleotides[i] for i in nucleotides)
+	sums[sums == 0] = 1
 	for letter in nucleotides:
-		nucleotides[letter] /= sum
+		nucleotides[letter] /= sums
+	trim_array_ends(nucleotides)
 	plt.xlabel("Position in Read")
 	plt.ylabel("Proportion of Base")
 	plt.title("Base Composition By Read Position For %s" % os.path.basename(file_name))
@@ -128,28 +141,30 @@ def make_nucleotides(length):
 # break this graph. Unlikely edge case but still
 # You need to do one for the files cumulatively here as well.
 def percent_gc(seqs, file_plots):
-	#pdb.set_trace()
 	nucleotides = make_nucleotides(len(seqs[0][0]["seq"]))
+	max_len = 0
 	for i in (range(len(seqs))):
 		nucleotides += make_nucleotides(len(seqs[0][0]))
-		max_len = 0
 		for j in (range(len(seqs[i]))):
 			x = 0
 			for letter in seqs[i][j]["seq"]:
-				while x not in range(len(nucleotides[i + 1][letter])):
+				while x >= len(nucleotides[i + 1][letter]):
 					nucleotides[i + 1][letter] = np.append(nucleotides[i + 1][letter], 0)
 				nucleotides[i + 1][letter][x] += 1
-				while x not in range(len(nucleotides[0][letter])):
+				while x >= len(nucleotides[0][letter]):
 					nucleotides[0][letter] = np.append(nucleotides[0][letter], 0)
 				nucleotides[0][letter][x] += 1
 				x += 1
-				if x > max_len:
-					max_len = x
-		if file_plots or len(nucleotides) == 1:
+			if x >= max_len:
+				max_len = x
+		if file_plots or len(seqs) == 1:
 			plot_percent_gc(nucleotides[i + 1], max_len, seqs[i][0]["filename"])
 	if (len(nucleotides) > 2):
 		plot_percent_gc(nucleotides[0], max_len, "All Files")
 
+######################################
+#  Quality/Base Graph Functions
+######################################
 def plot_quality_by_base(sum, file_name):
 	plt.plot(sum[0:], color = 'mediumblue', linewidth=2)
 	plt.title("Count of Reads Per Quality Score for %s" % os.path.basename(file_name))
@@ -205,6 +220,15 @@ def run_graphs(files, print_num, seqs):
 	percent_gc(seqs, print_num)
 	number_of_x_length(seqs, print_num)
 	quality_by_base(seqs, print_num)
+
+
+
+
+
+
+
+
+
 
 #############################################
 ## 	      quality check here
@@ -376,7 +400,7 @@ def check_truncated(seqs):
 #################################
 # Run QC checks:
 #################################
-def run_checks(files, seqs):
+def run_QC_checks(files, seqs):
 	for file in files:
 		if check_wrapped(file):
 			print ("%s included wrapped text. The file will automatically be unwrapped" % file)
@@ -447,7 +471,7 @@ def starts_at(file_name):
 	return (header.match(line))
 
 #run the above functions, check basic format correct.
-def is_it_fastq(files):
+def fastq_format_check(files):
 	for file in files:
 		if not starts_at(file):
 			print("First entry in %s doesn't start with a @. %s might not actually be FASTQ format. Exiting." % (os.path.basename(file), os.path.basename(file)))
@@ -459,10 +483,10 @@ def is_it_fastq(files):
 			print("The first entry in %s is missing the '+' line. %s might not actyally be FASTQ format. Exiting." % (os.path.basename(file), os.path.basename(file)))
 			sys.exit(0)
 
+######################################
+#  Main
+######################################
 def main():
-#################################
-#  Parse command line arguements 
-#################################
 	parser = argparse.ArgumentParser(
 		add_help = False,
 		formatter_class = lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position = 80),
@@ -483,30 +507,22 @@ def main():
 		print("")
 	args = parser.parse_args()
 	
-	######################################
-	#  Open files
-	######################################
 	files = []
 	forward_file = args.fastq_1
 	files.append(forward_file)
 	if args.fastq_2:
 		reverse_file = args.fastq_2 
 		files.append(reverse_file)
-	#Verify correct format:
-	is_it_fastq(files)
-	#if correct, read into array of dictionaries:
+	fastq_format_check(files)
 	seqs = []
 	for file in files:
 		seqs.append(put_in_struct(file))
-	#Run QC checks. Truncated entries removed and files unwrapped.
-	run_checks(files, seqs)
-	#print summary table... Number of reads, quality encoding
-	#Summary_table(seqs)
-	#Run graphs and summary statistics
+	run_QC_checks(files, seqs)
+	#Summary_table(seqs) (coming soon)
 	run_graphs(files, args.plot_num, seqs)
 
 ######################################
-#  Run Main!
+#  Call Main
 ######################################
 if __name__ == '__main__':
 	main()
