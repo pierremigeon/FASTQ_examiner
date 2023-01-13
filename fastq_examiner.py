@@ -50,6 +50,7 @@ def summarize_ns(file_name, plot_number):
 		plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
 		plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 		plt.show()
+	file.close()
 	return(N_count)
 
 def plot_total_ns(N_count):
@@ -92,7 +93,6 @@ def number_of_x_length(seqs, file_plots):
 			plot_number_of_x_length(lens, max_len, seqs[i][0]["filename"])
 	plot_number_of_x_length(t_lens, max_len, "All Files")
 
-
 ######################################
 #  %GC / Base Graph Functions
 ######################################
@@ -110,7 +110,6 @@ def trim_array_ends(array):
 			array[x] = array[x][:-1]			
 
 def plot_percent_gc(nucleotides, max_len, file_name):
-	#sum = np.zeros((max_len,), dtype=float)
 	polish_arrays(nucleotides, max_len)
 	sums = sum(nucleotides[i] for i in nucleotides)
 	sums[sums == 0] = 1
@@ -135,11 +134,7 @@ def make_nucleotides(length):
 	nucleotides.append({"A" : np.zeros(length), "T" : np.zeros(length), "C" : np.zeros(length), "G" : np.zeros(length), "N" : np.zeros(length)})
 	return nucleotides
 
-# Might consider converting all characters to 
-# uppercase during intake of files, in case you
-# run into fastq files with lowercase, would
-# break this graph. Unlikely edge case but still
-# You need to do one for the files cumulatively here as well.
+#Cannot handle lowercase- convert to all caps and print notification of case change
 def percent_gc(seqs, file_plots):
 	nucleotides = make_nucleotides(len(seqs[0][0]["seq"]))
 	max_len = 0
@@ -216,19 +211,9 @@ def run_graphs(files, print_num, seqs):
 	for file in files:
 		total_ns += summarize_ns(file, print_num)
 	plot_total_ns(total_ns)
-	#rename this function- percent by base
 	percent_gc(seqs, print_num)
 	number_of_x_length(seqs, print_num)
 	quality_by_base(seqs, print_num)
-
-
-
-
-
-
-
-
-
 
 #############################################
 ## 	      quality check here
@@ -253,8 +238,7 @@ def check_correct_nucleotides(line):
 #############################################
 #  Unwrap the files 
 #############################################
-#need to update this so that it crawls through a set of 4 guarenteed non-truncated entries.
-#Otherwise, trunctation early in the file will throw everything off.
+#cannot handle early/first read truncation
 def get_header(file_name):
 	header = re.compile('^@')
 	plus = re.compile('^\+')
@@ -318,7 +302,9 @@ def check_wrapped(file_name):
 		else :
 			i = 0	
 		if i > 1:
+			file.close()
 			return (True)
+	file.close()
 	return (False)
 
 #############################################
@@ -335,18 +321,23 @@ def check_truncated(file_name):
 	line_2 = re.compile('^\+')
 	for line in file:
 		if i == 0 and not line_0.match(line):
+			file.close()
 			return (True)
 		if i == 1:
 			if not check_correct_nucleotides(line):
+				file.close()
 				return (True)
 			length_seq = len(line)
 		if i == 2 and not line_2.match(line):
+			file.close()
 			return (True)
 		if i == 3:
 			if len(line) != length_seq:
+				file.close()
 				return (True)
 			i = -1
 		i += 1
+	file.close()
 	return (False)
 '''
 
@@ -395,6 +386,7 @@ def check_truncated(seqs):
 				removed += 1
 				outfile.write(as_read(seqs[i][j]))
 				seqs[i].remove(seqs[i][j])
+	outfile.close()
 	return (removed);
 
 #################################
@@ -404,10 +396,8 @@ def run_QC_checks(files, seqs):
 	for file in files:
 		if check_wrapped(file):
 			print ("%s included wrapped text. The file will automatically be unwrapped" % file)
-		i = check_truncated(seqs)
-		if i:
-                	print ("%i reads in %s were truncated. %i Truncated entries saved in ./out" % (i, file, i))
-
+		if (i := check_truncated(seqs)):
+			print ("%i reads in %s were truncated. %i Truncated entries saved in ./out" % (i, file, i))
 
 #############################################
 # Place each file into array of dictionaries
@@ -439,6 +429,7 @@ def put_in_struct(file_name):
 		if i == 1 and non_seq.match(line):
 			lines[j]["plus"] = line;
 			i += 1
+	file.close()
 	return (lines)
 
 ####################################
@@ -483,10 +474,11 @@ def fastq_format_check(files):
 			print("The first entry in %s is missing the '+' line. %s might not actyally be FASTQ format. Exiting." % (os.path.basename(file), os.path.basename(file)))
 			sys.exit(0)
 
+
 ######################################
-#  Main
+#  Help/Usage formatting and get args
 ######################################
-def main():
+def get_args():
 	parser = argparse.ArgumentParser(
 		add_help = False,
 		formatter_class = lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position = 80),
@@ -506,7 +498,13 @@ def main():
 	if '-h' or '--help' in sys.argv:
 		print("")
 	args = parser.parse_args()
-	
+	return args
+
+######################################
+#  Main
+######################################
+def main():
+	args = get_args()
 	files = []
 	forward_file = args.fastq_1
 	files.append(forward_file)
