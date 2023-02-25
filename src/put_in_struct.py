@@ -6,6 +6,7 @@
 #############################################@
 import re
 import src.run_QC_checks as rqcc
+import src.format_check as fc
 
 #############################################
 # Place each file into array of dictionaries
@@ -14,14 +15,12 @@ def put_in_struct(file_name):
 	header = rqcc.get_header(file_name)
 	header = re.compile(header)
 	non_seq = re.compile('^\+')
-	lines = []
+	lines = [{"filename" : file_name}]
 	j = -1
 	file = open(file_name, 'r')
 	for line in file:
 		if header.match(line):
 			lines.append({"header" : line})
-			if j == -1:
-				lines[0]["filename"] = file_name
 			i = 1
 			j += 1
 		if i == 1 and rqcc.check_correct_nucleotides(line):

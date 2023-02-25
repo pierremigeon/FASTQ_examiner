@@ -85,8 +85,7 @@ def unwrap(file_name):
 #############################################
 #  Check to see if the file is wrapped
 #############################################
-def check_wrapped(file_name):
-	file = open(file_name, 'r')
+def check_wrapped(file):
 	i = 0;
 	for line in file:
 		if check_correct_nucleotides(line):
@@ -94,9 +93,7 @@ def check_wrapped(file_name):
 		else :
 			i = 0	
 		if i > 1:
-			file.close()
 			return (True)
-	file.close()
 	return (False)
 
 #############################################
@@ -186,8 +183,10 @@ def check_truncated(seqs):
 #################################
 def run_QC_checks(files, seqs):
 	for file in files:
-		if check_wrapped(file):
+		the_file = open(file, 'r')
+		if check_wrapped(the_file):
 			print ("%s included wrapped text. The file will automatically be unwrapped" % file)
 		i = check_truncated(seqs)
 		if (i):
 			print ("%i reads in %s were truncated. %i Truncated entries saved in ./out" % (i, file, i))
+		the_file.close()
