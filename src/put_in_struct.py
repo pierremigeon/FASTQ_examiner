@@ -6,36 +6,75 @@
 #############################################@
 import re
 import src.run_QC_checks as rqcc
-import src.format_check as fc
+
+def is_error(lines):
+	if len(lines[-1]) == 0:
+		return False
+	if len(lines[-1]) != 4:
+		return True
+	# check correct header
+	#if 
+	# check correct Seq line
+	#if
+	# check correct + line
+	#if 
+	# check correct quality line
+
+
+def check_error(lines, error_lines):
+	if len(lines) == 1:
+		return
+	if is_error(lines):
+		error_lines.append(lines[-1])
+		lines.pop()
+
+def init_array(line):
+	return [line, "", "", "", ]
+
+
+#
+# this should handle/detect reads that are incomplete, 
+# reads that have too many lines,
+# reads that have lines out of order, 
+# and also unwrap lines for both quality and nucleotide, 
+# even if the unwrapped lines are found out of order.
+#
+# the check error and is_error functions check that only legal
+# characters (nucleotide and quality) are used. 
+# 
+# Next, I would like to detect if headers are inconsistent within the file and between files,
+# and I would like to remove singleton reads and place these in a seperate file.
+# Paired reads can be interleaved as well. Or they can all be output as is, minus the error reads.
+# Need to take user input for these details.
+#
+
 
 #############################################
 # Place each file into array of dictionaries
 #############################################
 def put_in_struct(file_name):
-	header = rqcc.get_header(file_name)
-	header = re.compile(header)
-	non_seq = re.compile('^\+')
+	#head = rqcc.get_header(file_name)
+	head = re.compile('^@')
+	sep = re.compile('^\+')
 	lines = [{"filename" : file_name}]
-	j = -1
+	error_lines = []
+	i = -1
 	file = open(file_name, 'r')
 	for line in file:
-		if header.match(line):
-			lines.append({"header" : line})
-			i = 1
-			j += 1
-		if i == 1 and rqcc.check_correct_nucleotides(line):
-			if "seq" in lines[j]:
-				lines[j]["seq"] += line.rstrip()
-			else:
-				lines[j]["seq"] = line.rstrip()
-		if i == 2:
-			if "qual" in lines[j]:
-				lines[j]["qual"] += line.rstrip()
-			else:
-				lines[j]["qual"] = line.rstrip()
-		if i == 1 and non_seq.match(line):
-			lines[j]["plus"] = line;
+		if not head.match(line) and i == -1:
+			if not line.startswith("#"):
+				error_lines.append(line)			
+		if head.match(line):
+			i = 0
+			check_error(lines, error_lines)
+			lines.append(init_array(line))
+		elif sep.match(line):
 			i += 1
+			lines[-1][i] += line.rstrip()
+		else:
+			if head.match(lines[-1][i]) or sep.match(lines[-1][i]):
+				i += 1
+			lines[-1][i] += line.rstrip()
 	file.close()
+	check_error(lines, error_lines)
 	return (lines)
-

@@ -72,8 +72,8 @@ def number_of_x_length(seqs, file_plots):
 	max_len = 0;
 	for i in range(len(seqs)):
 		lens = np.zeros((750,), dtype=int)
-		for j in range(len(seqs[i])):
-			length = len(seqs[i][j]["seq"])
+		for j in range(1, len(seqs[i])):
+			length = len(seqs[i][j][1])
 			lens[length] += 1
 			if length > max_len:
 				max_len = length
@@ -125,13 +125,13 @@ def make_nucleotides(length):
 
 #Cannot handle lowercase- convert to all caps and print notification of case change
 def percent_gc(seqs, file_plots):
-	nucleotides = make_nucleotides(len(seqs[0][0]["seq"]))
+	nucleotides = make_nucleotides(len(seqs[0][1][1]))
 	max_len = 0
 	for i in (range(len(seqs))):
 		nucleotides += make_nucleotides(len(seqs[0][0]))
-		for j in (range(len(seqs[i]))):
+		for j in (range(1, len(seqs[i]))):
 			x = 0
-			for letter in seqs[i][j]["seq"]:
+			for letter in seqs[i][j][1]:
 				while x >= len(nucleotides[i + 1][letter]):
 					nucleotides[i + 1][letter] = np.append(nucleotides[i + 1][letter], 0)
 				nucleotides[i + 1][letter][x] += 1
@@ -142,7 +142,7 @@ def percent_gc(seqs, file_plots):
 			if x >= max_len:
 				max_len = x
 		if file_plots or len(seqs) == 1:
-			plot_percent_gc(nucleotides[i + 1], max_len, seqs[i][0]["filename"])
+			plot_percent_gc(nucleotides[i + 1], max_len, seqs[i][0]['filename'])
 	if (len(nucleotides) > 2):
 		plot_percent_gc(nucleotides[0], max_len, "All Files")
 
@@ -173,8 +173,8 @@ def average_qual(qual_str, encoding):
 def get_encoding(seqs):
 	min = '~'
 	max = '!'
-	for entry in range(len(seqs)):
-		for char in seqs[entry]["qual"]:
+	for entry in range(1, len(seqs)):
+		for char in seqs[entry][3]:
 			if char < min:
 				min = char
 			if char > max:
@@ -188,8 +188,8 @@ def quality_by_base(seqs, print_num):
 	sum = np.zeros((45,), dtype=int)
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
-		for entry in range(len(seqs[file])):
-			sum[average_qual(seqs[file][entry]["qual"], encoding)] += 1
+		for entry in range(1, len(seqs[file])):
+			sum[average_qual(seqs[file][entry][3], encoding)] += 1
 		plot_quality_by_base(sum, seqs[file][0]["filename"])
 
 ######################################

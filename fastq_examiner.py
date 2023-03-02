@@ -18,7 +18,6 @@ import argparse
 import pdb
 #############################################
 #program modules
-import src.format_check as fc
 import src.put_in_struct as pis
 import src.run_QC_checks as rqcc
 import src.run_graphs as rg
@@ -59,11 +58,9 @@ def main():
 	if args.fastq_2:
 		reverse_file = args.fastq_2 
 		files.append(reverse_file)
-	fc.fastq_format_check(files)
 	seqs = []
 	for file in files:
 		seqs.append(pis.put_in_struct(file))
-	rqcc.run_QC_checks(files, seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #############################################@
 #@
-#	FASTQ_examiner QC check module
+#	FASTQ_examiner QC/Format check module
 #@
 #############################################@
 import re
@@ -10,6 +10,10 @@ import os
 #############################################
 ## 	      quality check here
 #############################################
+#def header(line):
+#	header = re.compile('^@')
+	
+
 def check_correct_nucleotides(line):
 	acceptable = ['A', 'C', 'T', 'G', 'N', 'U', 'a', 't', 'c', 'g', 'n', 'u']
 	line = line.rstrip()
@@ -18,69 +22,9 @@ def check_correct_nucleotides(line):
 			return (False)
 	return (True)
 
-'''
- The following is only relevant in some rare 
- cases (Sanger style fastq, for instance)
- But will still be useful to detect in such 
- a case. Only checks sequence lines assuming
- that these are the only things that are 
- wrapped. Wrapped seq ID lines will throw a
- trunctation error.
-'''
-#############################################
-#  Unwrap the files 
-#############################################
-#cannot handle early/first read truncation
-def get_header(file_name):
-	header = re.compile('^@')
-	plus = re.compile('^\+')
-	file = open(file_name, 'r')
-	first_line = file.readline()
-	if len(first_line) < 2:
-		print("Minimal information stored in the header line... Possible bugs ahead. You may want to reformat headerlines.")
-	seq_line = file.readline()
-	x = 0
-	if len(seq_line) == len(first_line):
-		x = 1
-	i = 2
-	last_line = seq_line
-	for line in file:
-		if header.match(line) and not plus.match(last_line):
-			if len(line) != len(seq_line) or x:
-				if len(os.path.commonprefix([first_line, line])) > 1: 
-					first_line = os.path.commonprefix([first_line, line])
-		last_line = line
-		i += 1
-	file.close()
-	return (first_line)
 
-'''
-def unwrap(file_name):
-	header = get_header(file_name)
-	line_2 = re.compile('^\+|^\+header')
-	header = re.compile(header)
-	file = open(file_name, 'r')
-	out_path = "./out/" + os.path.splitext(os.path.basename(file_name))[0] + ".unwrapped.fastq"
-	if not os.path.exists(out_path):
-		os.makedirs(out_path)	 
-	out = open(out_path, 'w')
-	growing_line = ""
-	i = 0
-	for line in file:
-		if header.match(line):
-			if i == 0:
-				i += 1
-				out.write(line)
-			else:
-				 out.write("\n" + line)
-		elif line_2.match(line):
-			out.write("\n" + line)
-		else :
-			out.write(line.rstrip())
-	out.write("\n")
-	file.close()
-	out.close()
-'''
+
+
 
 #############################################
 #  Check to see if the file is wrapped
