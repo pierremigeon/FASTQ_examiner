@@ -7,10 +7,10 @@
 import re
 import src.run_QC_checks as rqcc
 
-def is_error(lines):
-	if len(lines[-1]) == 0:
+def is_error(line):
+	if len(line) == 0:
 		return False
-	if len(lines[-1]) != 4:
+	if len(line) != 4:
 		return True
 	# check correct header
 	#if 
@@ -24,7 +24,8 @@ def is_error(lines):
 def check_error(lines, error_lines):
 	if len(lines) == 1:
 		return
-	if is_error(lines):
+	lines[-1] = [i for i in lines[-1] if i]
+	if is_error(lines[-1]):
 		error_lines.append(lines[-1])
 		lines.pop()
 

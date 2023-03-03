@@ -149,6 +149,7 @@ def percent_gc(seqs, file_plots):
 ######################################
 #  Quality/Base Graph Functions
 ######################################
+# I think this portion might be faulty in terms of accuracy, need to review more soon. 
 def plot_quality_by_base(sum, file_name):
 	plt.plot(sum[0:], color = 'mediumblue', linewidth=2)
 	plt.title("Count of Reads Per Quality Score for %s" % os.path.basename(file_name))
