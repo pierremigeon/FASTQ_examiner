@@ -17,7 +17,6 @@ import sys
 import argparse
 import pdb
 #############################################
-#program modules
 import src.put_in_struct as pis
 import src.run_QC_checks as rqcc
 import src.run_graphs as rg
@@ -47,6 +46,15 @@ def get_args():
 	args = parser.parse_args()
 	return args
 
+def is_empty(seqs):
+	for entry in seqs:
+		if len(entry) > 1:
+			return False
+	return True
+
+def trim_empty(seqs):
+	seqs = [element for element in seqs if len(element) > 1]
+
 ######################################
 #  Main
 ######################################
@@ -61,6 +69,9 @@ def main():
 	seqs = []
 	for file in files:
 		seqs.append(pis.put_in_struct(file))
+	if is_empty(seqs):
+		sys.exit("All input files are empty! exiting...")
+	trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)
 

@@ -10,4 +10,13 @@ then
 	./fastq_examiner.py -f1 ./test_files/head_1 -f2 ./test_files/head_2 -i
 fi
 
+if [ $1 -eq 3 ];
+then
+	./fastq_examiner.py -f1 ./test_files/C1.3.fastq  -f2 ./test_files/C1.4.fastq  -i
+fi
+
+if [ $1 -eq 4 ];
+then
+	./fastq_examiner.py -f1 ./test_files/head_1  -f2 ./test_files/C1.4.fastq  -i
+fi
 
