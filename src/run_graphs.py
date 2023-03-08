@@ -12,24 +12,20 @@ import os
 ## %N Basecalls / Base Graph Functions
 #############################################
 #This is to summarize the bases where Ns were found.
-def summarize_ns(file_name, plot_number):
+def summarize_ns(file, plot_number):
 	N_count = np.zeros((1500,), dtype=float)
 	max_length = 0;
 	i = 0
-	file = open(file_name, 'r')
-	for line in file:
-		if i == 1:
-			j = 0
-			for char in line:
-				N_count[j + 750] += 1
-				if char == "N":
-					N_count[j] += 1
-				j += 1
-			if j > max_length:
-				max_length = j
-		if i == 3:
-			i = -1
-		i += 1
+	file_name = file[0]['filename']
+	for read in file[1:len(file)]:
+		j = 0
+		for char in read[1]:
+			N_count[j + 750] += 1
+			if char == "N":
+				N_count[j] += 1
+			j += 1
+		if j > max_length:
+			max_length = j
 	if plot_number:
 		plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #linestyle='dashed')
 		plt.xlabel("Position in Read")
@@ -39,7 +35,6 @@ def summarize_ns(file_name, plot_number):
 		plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
 		plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
 		plt.show()
-	file.close()
 	return(N_count)
 
 def plot_total_ns(N_count):
@@ -198,7 +193,7 @@ def quality_by_base(seqs, print_num):
 ######################################
 def run_graphs(files, print_num, seqs):
 	total_ns = np.zeros((1500,), dtype=float)
-	for file in files:
+	for file in seqs:
 		total_ns += summarize_ns(file, print_num)
 	plot_total_ns(total_ns)
 	percent_gc(seqs, print_num)

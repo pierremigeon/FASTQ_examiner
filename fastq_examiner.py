@@ -54,6 +54,7 @@ def is_empty(seqs):
 
 def trim_empty(seqs):
 	seqs = [element for element in seqs if len(element) > 1]
+	return seqs
 
 ######################################
 #  Main
@@ -71,7 +72,7 @@ def main():
 		seqs.append(pis.put_in_struct(file))
 	if is_empty(seqs):
 		sys.exit("All input files are empty! exiting...")
-	trim_empty(seqs)
+	seqs = trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)
 
