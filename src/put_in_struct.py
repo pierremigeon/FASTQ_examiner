@@ -5,6 +5,7 @@
 #@
 #############################################@
 import re
+import os
 import src.run_QC_checks as rqcc
 
 def is_error(line):
@@ -31,6 +32,24 @@ def check_error(lines, error_lines):
 def init_array(line):
 	return [line, "", "", "", ]
 
+#expand the way you count reads to include header lines that are truncated- in the (somewhat unlikely) case that they lost the first few characters of the line 
+
+def error_out(file_name, error_lines):
+	if len(error_lines) == 0:
+		return
+	read_count = 0
+	fname_base = os.path.basename(file_name)
+	out_file_name = './out/' + fname_base + '_error_reads.fq'
+	out = open(out_file_name, 'w')
+	for read in error_lines:
+		for line in read:
+			newline = 1
+			if re.match('^@', line):
+				read_count += 1
+			if "\n" in line:
+				newline = 0
+			out.write(line + ("\n" * newline))
+	print("%d reads from file %s were determined to be erroneous, removed, and placed in %s" % (read_count, fname_base, out_file_name))
 
 #
 # this handles/detects reads that are:
@@ -81,4 +100,5 @@ def put_in_struct(file_name):
 			lines[-1][i] += line.rstrip()
 	file.close()
 	check_error(lines, error_lines)
+	error_out(file_name, error_lines)
 	return (lines)
