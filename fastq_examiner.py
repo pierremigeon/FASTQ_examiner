@@ -56,6 +56,7 @@ def trim_empty(seqs):
 	seqs = [element for element in seqs if len(element) > 1]
 	return seqs
 
+#Check to see if the seqs file is empty when you output the error reads, so that you can specify to the user exactly if all reads have errors -vs- no reads at all in the files.
 ######################################
 #  Main
 ######################################
@@ -71,7 +72,7 @@ def main():
 	for file in files:
 		seqs.append(pis.put_in_struct(file))
 	if is_empty(seqs):
-		sys.exit("All input files are empty! exiting...")
+		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)

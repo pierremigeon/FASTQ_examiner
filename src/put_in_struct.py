@@ -7,6 +7,7 @@
 import re
 import os
 import src.run_QC_checks as rqcc
+from functools import reduce 
 
 def is_error(line):
 	if len(line) != 4:
@@ -92,12 +93,12 @@ def fresh_line(line, i):
 		if not line.startswith("#"):
 			return True
 
-def: is_plus(line, info):
+def is_plus(line, info):
 	if not re.match('^\+', line):
 		return False
-	if len(line) < 0.5 * info[2] or len(line) > 0.5 * info[2]
+	if len(line) < 0.5 * info[2] or len(line) > 1.5 * info[2]:
 		return False
-	if len(line) > 10 and info[4] > 10:
+	if len(line) > 10 and len(info[4]) > 10:
 		if line in info[4] or info[4] in line:
 			return True
 	if longest_common_substring_percentage(line, info[3]) > 0.50:
@@ -107,10 +108,10 @@ def: is_plus(line, info):
 def is_header(line, info):
 	if not re.match('^@', line):
 		return False
-	if len(line) < 0.5 * info[1] or len(line) > 0.5 * info[1]
+	if len(line) < 0.5 * info[1] or len(line) > 1.5 * info[1]:
 		return False
 	if len(line) > 10 and info[1] > 10:
-		 if line in info[3] or info[3] in line:
+		if line in info[3] or info[3] in line:
 			return True
 	if longest_common_substring_percentage(line, info[3]) > 0.50:
 		return True
@@ -118,12 +119,14 @@ def is_header(line, info):
 
 #output warning to apropriate locations, error log files or console
 def get_common_string(header, tag):
-	average_len = reduce(lambda x, y: x + y, map(len, header)) / len(header)
+	average_len = round(reduce(lambda x, y: x + y, map(len, header)) / len(header))
 	substr = ""
-	for i in average_len:
-		common_letter = max(set(header), key=header[i].count)[i]
-		filtered = [ h for h in head if h[i] == common_letter ]
-		if (len(filtered) / float(i)) * 100 < 75:
+	zip_list = list(zip(*header))
+	print(average_len)
+	for i in range(average_len):
+		common_letter = max(set(zip_list[i]), key=zip_list.count)
+		filtered = [ h for h in header if h[i] == common_letter ]
+		if (len(filtered) / float(len(header))) * 100 < 75:
 			break
 		substr += common_letter
 	if len(substr) < 0.3 * average_len:
@@ -132,24 +135,42 @@ def get_common_string(header, tag):
 	return substr
 
 def get_info(file):
-	head_len = plus_len = other_len = header = plus = []
+	head_len, plus_len, other_len, header, plus = [], [], [], [], []
 	i = 0
-	line = file.read()
-	while i < 4000 and line := file.read():
+	line = file.readline()
+	while i < 2000 and (line := file.readline()):
 		if re.match('^@', line):
 			head_len.append(len(line))
 			header.append(line)
 		elif re.match('^\+', line):
-			pluses.append(len(line))
-		else
-			other.append(len(line))
+			plus_len.append(len(line))
+			plus.append(line)
+		else:
+			other_len.append(len(line))
 		i += 1
 	head_len = max(set(head_len), key=head_len.count)
-	plus_len = max(set(pluses), key=pluses.count)
-	other_len = max(set(other), key=other.count)
-	header = get_commmon_string(header, "@")
+	plus_len = max(set(plus_len), key=plus_len.count)
+	other_len = max(set(other_len), key=other_len.count)
+	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
+	print(header)
+	print(plus)
 	return (other_len, head_len, plus_len, header, plus)
+
+
+def check_type(line):
+	if rqcc.check_correct_nucleotides(line):
+		return "Seq"
+	return "Qual"
+
+def line_same_type(type, old_line, new_line):
+	if type != "":
+		return False
+	type_1 = check_type(old_line)
+	type_2 = check_type(new_line)
+	if type_1 == type_2:
+		return True
+	return False
 
 #what happens if a quality line starts with @? Need a more concrete means of checking header
 #############################################
@@ -162,20 +183,26 @@ def put_in_struct(file_name):
 	i = -1
 	info = get_info(file)
 	file.seek(0)
+	last_type = ""
+
+#import pdb; pdb.set_trace()
 	for line in file:
 		if fresh_line(line, i):
 			error_lines.append(line)
-		if is_header(line, info)
+		if is_header(line, info):
 			i = 0
 			check_error(lines, error_lines)
 			lines.append(init_array(line))
+			last_type = "Header"
 		elif is_plus(line, info):
 			i += 1
 			lines[-1][i] += line.rstrip()
+			last_type = "Plus"
 		else:
-			if head.match(lines[-1][i]) or sep.match(lines[-1][i]):
+			if not line_same_type(last_type, lines[-1][i], line):
 				i += 1
 			lines[-1][i] += line.rstrip()
+			last_type = ""
 	file.close()
 	check_error(lines, error_lines)
 	error_out(file_name, error_lines)
