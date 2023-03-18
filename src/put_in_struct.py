@@ -38,8 +38,8 @@ def init_array(line):
 def error_out(file_name, error_lines):
 	if len(error_lines) == 0:
 		return
-	read_count = 0
-	fname_base = os.path.basename(file_name)
+	read_count = 0 
+	fname_base = os.path.splitext(os.path.basename(file_name))[0]
 	out_file_name = './out/' + fname_base + '_error_reads.fq'
 	out = open(out_file_name, 'w')
 	for read in error_lines:
@@ -57,19 +57,16 @@ def error_out(file_name, error_lines):
 #	2) too many lines (>4)
 #	3) lines out of order
 #	4) only legal nucleotides
-#	5) 
 # And it unwraps lines for both quality and nucleotide, automatically.
 # Even if the lines are found out of order
 ########
 #TO DO LIST:
-# Next, I would like to run tests on these error detection steps to verify correct function. 
-# Then, I would like to collect summary statistics and output these to tables.
-# It will probably be best to collect all the statistics as the reads are placed in the data structure, then send these summaries to the graphing functions at the end. 
+# I would like to run tests on these error detection steps to verify correct function. 
+# I would like to collect summary statistics and output these to tables, collecting data as the reads are read.
 # I would like to detect if headers are inconsistent within the file and between files,
 # and I would like to remove singleton reads and place these in a seperate file.
 # Paired reads can be interleaved as well. Or they can all be output as is, minus the error reads.
 #
-
 
 from difflib import SequenceMatcher
 
@@ -98,10 +95,10 @@ def is_plus(line, info):
 		return False
 	if len(line) < 0.5 * info[2] or len(line) > 1.5 * info[2]:
 		return False
-	if len(line) > 10 and len(info[4]) > 10:
+	if len(line) > 10 and info[2] > 10:
 		if line in info[4] or info[4] in line:
 			return True
-	if longest_common_substring_percentage(line, info[3]) > 0.50:
+	if longest_common_substring_percentage(line, info[4]) > 0.50:
 		return True
 	return False
 
@@ -122,9 +119,8 @@ def get_common_string(header, tag):
 	average_len = round(reduce(lambda x, y: x + y, map(len, header)) / len(header))
 	substr = ""
 	zip_list = list(zip(*header))
-	print(average_len)
 	for i in range(average_len):
-		common_letter = max(set(zip_list[i]), key=zip_list.count)
+		common_letter = max(set(zip_list[i]), key=zip_list[i].count)
 		filtered = [ h for h in header if h[i] == common_letter ]
 		if (len(filtered) / float(len(header))) * 100 < 75:
 			break
@@ -134,29 +130,29 @@ def get_common_string(header, tag):
 			("header" if tag == "@" else "separator"))
 	return substr
 
+def set_values(o_len, h_len, p_len, header, plus):
+	o_len = max(set(o_len), key=o_len.count)
+	h_len = max(set(h_len), key=h_len.count)
+	p_len = max(set(p_len), key=p_len.count)
+	header = get_common_string(header, "@")
+	plus = get_common_string(plus, "+")
+	return (o_len, h_len, p_len, header, plus)
+
 def get_info(file):
-	head_len, plus_len, other_len, header, plus = [], [], [], [], []
+	o_len, h_len, p_len, header, plus = [], [], [], [], []
 	i = 0
 	line = file.readline()
 	while i < 2000 and (line := file.readline()):
 		if re.match('^@', line):
-			head_len.append(len(line))
+			h_len.append(len(line))
 			header.append(line)
 		elif re.match('^\+', line):
-			plus_len.append(len(line))
+			p_len.append(len(line))
 			plus.append(line)
 		else:
-			other_len.append(len(line))
+			o_len.append(len(line))
 		i += 1
-	head_len = max(set(head_len), key=head_len.count)
-	plus_len = max(set(plus_len), key=plus_len.count)
-	other_len = max(set(other_len), key=other_len.count)
-	header = get_common_string(header, "@")
-	plus = get_common_string(plus, "+")
-	print(header)
-	print(plus)
-	return (other_len, head_len, plus_len, header, plus)
-
+	return (set_values(o_len, h_len, p_len, header, plus))
 
 def check_type(line):
 	if rqcc.check_correct_nucleotides(line):

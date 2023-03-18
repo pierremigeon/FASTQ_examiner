@@ -76,6 +76,7 @@ def main():
 	seqs = trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)
+	print("Run Successful\n")
 
 ######################################
 #  Call Main
