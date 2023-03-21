@@ -20,6 +20,7 @@ import pdb
 import src.put_in_struct as pis
 import src.run_QC_checks as rqcc
 import src.run_graphs as rg
+import src.manage_files as mf
 
 ######################################
 #  Help/Usage formatting and get args
@@ -75,7 +76,9 @@ def main():
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
-	rg.run_graphs(files, args.plot_num, seqs)
+	#rg.run_graphs(files, args.plot_num, seqs)
+	mf.order_files(seqs)
+	mf.remove_singletons(seqs)
 	print("Run Successful\n")
 
 ######################################

@@ -22,13 +22,15 @@ def is_error(line):
 		return True
 	return False
 
-def check_error(lines, error_lines):
+def handle_error(lines, error_lines):
 	if len(lines) == 1:
 		return
 	lines[-1] = [i for i in lines[-1] if i]
 	if is_error(lines[-1]):
 		error_lines.append(lines[-1])
 		lines.pop()
+	else:
+		lines[0]["headers"][lines[-1][0]] = len(lines) - 2
 
 def init_array(line):
 	return [line, "", "", "", ]
@@ -125,8 +127,8 @@ def get_common_string(header, tag):
 		if (len(filtered) / float(len(header))) * 100 < 75:
 			break
 		substr += common_letter
-	if len(substr) < 0.3 * average_len:
-		print("Warning: %s lines are extremely polymorphic." % \
+	if len(substr) < 0.25 * average_len:
+		print("Warning: %s lines are extremely polymorphic, short consensus obtained." % \
 			("header" if tag == "@" else "separator"))
 	return substr
 
@@ -168,26 +170,24 @@ def line_same_type(type, old_line, new_line):
 		return True
 	return False
 
-#what happens if a quality line starts with @? Need a more concrete means of checking header
 #############################################
 # Place each file into array of dictionaries
 #############################################
 def put_in_struct(file_name):
-	lines = [{"filename" : file_name}]
-	error_lines = []
 	file = open(file_name, 'r')
-	i = -1
 	info = get_info(file)
+	lines = [{"filename" : file_name, "headers" : {}, "head" : info[3]}]
+	error_lines = []
+	i = -1
 	file.seek(0)
 	last_type = ""
-
 #import pdb; pdb.set_trace()
 	for line in file:
 		if fresh_line(line, i):
 			error_lines.append(line)
 		if is_header(line, info):
 			i = 0
-			check_error(lines, error_lines)
+			handle_error(lines, error_lines)
 			lines.append(init_array(line))
 			last_type = "Header"
 		elif is_plus(line, info):
@@ -200,6 +200,6 @@ def put_in_struct(file_name):
 			lines[-1][i] += line.rstrip()
 			last_type = ""
 	file.close()
-	check_error(lines, error_lines)
+	handle_error(lines, error_lines)
 	error_out(file_name, error_lines)
 	return (lines)
