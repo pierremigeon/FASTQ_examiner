@@ -20,3 +20,7 @@ then
 	./fastq_examiner.py -f1 ./test_files/head_1  -f2 ./test_files/C1.4.fastq  -i
 fi
 
+if [ $1 -eq 5 ];
+then
+	./fastq_examiner.py -f1 ./test_files/singleton_test_f1.fq -f2 ./test_files/singleton_test_f2.fq
+fi

@@ -33,7 +33,7 @@ def handle_error(lines, error_lines):
 		lines[0]["headers"][lines[-1][0]] = len(lines) - 2
 
 def init_array(line):
-	return [line, "", "", "", ]
+	return [line.rstrip(), "", "", "", ]
 
 #expand the way you count reads to include header lines that are truncated- in the (somewhat unlikely) case that they lost the first few characters of the line 
 
