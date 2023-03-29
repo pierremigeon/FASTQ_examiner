@@ -35,8 +35,6 @@ def handle_error(lines, error_lines):
 def init_array(line):
 	return [line.rstrip(), "", "", "", ]
 
-#expand the way you count reads to include header lines that are truncated- in the (somewhat unlikely) case that they lost the first few characters of the line 
-
 def error_out(file_name, error_lines):
 	if len(error_lines) == 0:
 		return
@@ -66,7 +64,6 @@ def error_out(file_name, error_lines):
 # I would like to run tests on these error detection steps to verify correct function. 
 # I would like to collect summary statistics and output these to tables, collecting data as the reads are read.
 # I would like to detect if headers are inconsistent within the file and between files,
-# and I would like to remove singleton reads and place these in a seperate file.
 # Paired reads can be interleaved as well. Or they can all be output as is, minus the error reads.
 #
 

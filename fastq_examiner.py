@@ -42,6 +42,7 @@ def get_args():
 	parser.add_argument('-c', help="""\tcorrect invalid files""")
 	parser.add_argument('-q', help="""\tcheck validity of files and then exit""")
 	parser.add_argument('-i', '--plot_individual', dest='plot_num', help="""\tproduce individual summary plots""", required=False, action='store_true')
+	parser.add_argument('-leaf', help="""\tPaired reads are output in interleaved format""", required=False, action='store_true')
 	if '-h' or '--help' in sys.argv:
 		print("")
 	args = parser.parse_args()
@@ -79,6 +80,7 @@ def main():
 	rg.run_graphs(files, args.plot_num, seqs)
 	mf.order_files(seqs)
 	mf.remove_singletons(seqs)
+	mf.output_processed_reads(seqs, args.leaf)
 	print("Run Successful\n")
 
 ######################################

@@ -7,6 +7,9 @@
 from itertools import chain
 import os
 
+def output_processed_reads(seqs, leaf_flag):
+	#print(leaf_flag)
+
 def remove_singletons(seqs):
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:
