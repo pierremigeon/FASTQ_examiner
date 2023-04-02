@@ -77,7 +77,7 @@ def main():
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	#Summary_table(seqs) (coming soon)
-	#rg.run_graphs(files, args.plot_num, seqs)
+	rg.run_graphs(files, args.plot_num, seqs)
 	mf.order_files(seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)

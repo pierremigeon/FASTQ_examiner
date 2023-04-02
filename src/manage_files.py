@@ -7,13 +7,6 @@
 from itertools import chain
 import os
 
-#################
-# Known Bugs to fix:
-# 1) singletons are output to a different directory but they fail to be removed from the paired file
-# 2) There aren't newlines at the end of the read joins 
-#
-###############
-
 def get_file_out_name(original_file_name, extension):
 	out_name = os.path.splitext(os.path.basename(original_file_name))[0]
 	out_name = './out/' + out_name + extension
@@ -29,13 +22,15 @@ def output_processed_reads(seqs, leaf_flag):
 	i = 0
 	if leaf_flag:
 		i = interleave(seqs)
+	new_line = '\n'
 	for j in range(i, len(seqs)):
-		out_name = get_file_out_name(seqs[i][0]["filename"], '_final.fq')
+		out_name = get_file_out_name(seqs[j][0]["filename"], '_final.fq')
 		with open(out_name, 'w') as f:
-			f.write("\n".join(list(chain.from_iterable(seqs[i][1:len(seqs[i])]))))
+			f.write('\n'.join(chain.from_iterable(seqs[j][1:len(seqs[j])])) + '\n')
 		f.close()
 
 def remove_singletons(seqs):
+	print(seqs)
 	names, sets, out = [], [], []
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:
@@ -46,9 +41,12 @@ def remove_singletons(seqs):
 		diff = set(sets[i]).symmetric_difference(sets[i + 1])
 		for j in range(i, i + 2):
 			out.append([read for read in seqs[j][1:len(seqs[j])] if read[0].strip("/[12]") in diff])
-			with open(names[j], 'w') as f:
-				f.write("\n".join(list(chain.from_iterable(out[j]))))
-			f.close()
+			seqs[j] = [read for read in seqs[j] if list(read)[0].strip("/[12]") not in diff]
+			print(seqs)
+			if out[-1]:
+				with open(names[j], 'w') as f:
+					f.write("\n".join(list(chain.from_iterable(out[j]))) + '\n')
+				f.close()
 
 def order_files(seqs):
 	seqs.sort(key=lambda x: x[0]['head'])
