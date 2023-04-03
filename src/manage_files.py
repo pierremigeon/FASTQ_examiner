@@ -7,15 +7,29 @@
 from itertools import chain
 import os
 
+# Tests to write: 
+# 	1) Does the sorting of the paired lists work?
+
 def get_file_out_name(original_file_name, extension):
 	out_name = os.path.splitext(os.path.basename(original_file_name))[0]
 	out_name = './out/' + out_name + extension
 	return out_name
 
+def get_common_name(name_1, name_2):
+	common = os.path.commonprefix([name_1, name_2])
+	if common[-1] == '_':
+		common = common.rstrip('_')
+	return common
+
 def interleave(seqs):
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:	
 			break
+		out = list(chain.from_iterable(list(map(list, zip(seqs[i], seqs[i + 1])))))
+		common_name = get_common_name(out[0]["filename"], out[1]["filename"])
+		out_name = get_file_out_name(common_name, '_leaf_final.fq')
+		with open(out_name, 'w') as f:
+			f.write('\n'.join(chain.from_iterable(out[2:len(out)])) + '\n')
 	return i
 
 def output_processed_reads(seqs, leaf_flag):
@@ -30,7 +44,6 @@ def output_processed_reads(seqs, leaf_flag):
 		f.close()
 
 def remove_singletons(seqs):
-	print(seqs)
 	names, sets, out = [], [], []
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:
@@ -42,7 +55,6 @@ def remove_singletons(seqs):
 		for j in range(i, i + 2):
 			out.append([read for read in seqs[j][1:len(seqs[j])] if read[0].strip("/[12]") in diff])
 			seqs[j] = [read for read in seqs[j] if list(read)[0].strip("/[12]") not in diff]
-			print(seqs)
 			if out[-1]:
 				with open(names[j], 'w') as f:
 					f.write("\n".join(list(chain.from_iterable(out[j]))) + '\n')
