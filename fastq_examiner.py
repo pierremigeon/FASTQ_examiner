@@ -76,6 +76,8 @@ def main():
 	if is_empty(seqs):
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
+	#interleaved files split into forward and reverse
+	seqs = split_leafs(seqs)
 	#Summary_table(seqs) (coming soon)
 	rg.run_graphs(files, args.plot_num, seqs)
 	mf.order_files(seqs)
