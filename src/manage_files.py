@@ -21,7 +21,7 @@ def get_common_name(name_1, name_2):
 		common = common.rstrip('_')
 	return common
 
-def interleave(seqs):
+def interleaf(seqs):
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:	
 			break
@@ -35,13 +35,23 @@ def interleave(seqs):
 def output_processed_reads(seqs, leaf_flag):
 	i = 0
 	if leaf_flag:
-		i = interleave(seqs)
+		i = interleaf(seqs)
 	new_line = '\n'
 	for j in range(i, len(seqs)):
 		out_name = get_file_out_name(seqs[j][0]["filename"], '_final.fq')
 		with open(out_name, 'w') as f:
 			f.write('\n'.join(chain.from_iterable(seqs[j][1:len(seqs[j])])) + '\n')
 		f.close()
+
+def split_leafed(seqs):
+	new_seqs = []
+	for i in range(0, len(seqs)):
+		if seqs[i][0]["leafed"]:
+			new_seqs.append(seqs[i][0:seqs[i][0]["middle"])
+			new_seqs.append(seqs[i][0] + seqs[i][seqs[i][0]["middle"]:-1])
+		else:
+			new_seqs.append(seqs) 
+		return new_seqs
 
 def remove_singletons(seqs):
 	names, sets, out = [], [], []

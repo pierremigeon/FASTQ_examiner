@@ -65,7 +65,7 @@ def error_out(file_name, error_lines):
 # I would like to run tests on these error detection steps to verify correct function. 
 # I would like to collect summary statistics and output these to tables, collecting data as the reads are read.
 # I would like to detect if headers are inconsistent within the file and between files,
-# Paired reads can be interleaved as well. Or they can all be output as is, minus the error reads.
+# Paired reads can be interleafed as well. Or they can all be output as is, minus the error reads.
 #
 
 from difflib import SequenceMatcher
@@ -130,36 +130,36 @@ def get_common_string(header, tag):
 			("header" if tag == "@" else "separator"))
 	return substr
 
-def check_leaf_status(leaved):
-	return leaved[0] and leaved[1]
+def check_leaf_status(leafed):
+	return leafed[0] and leafed[1]
 
-def set_values(o_len, h_len, p_len, header, plus, leaved):
+def set_values(o_len, h_len, p_len, header, plus, leafed):
 	o_len = max(set(o_len), key=o_len.count)
 	h_len = max(set(h_len), key=h_len.count)
 	p_len = max(set(p_len), key=p_len.count)
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
-	leaved = check_leaf_status(leaved)
-	return (o_len, h_len, p_len, header, plus, leaved)
+	leafed = check_leaf_status(leafed)
+	return (o_len, h_len, p_len, header, plus, leafed)
 
 def get_info(file):
 	o_len, h_len, p_len, header, plus = [], [], [], [], []
 	i = 0
-	leaved = [False, False]
+	leafed = [False, False]
 	line = file.readline()
 	while i < 2000 and (line := file.readline()):
 		if re.match('^@', line):
 			h_len.append(len(line))
 			header.append(line)
-			leaved[0] = line[-2:] == "/1"
-			leaved[1] = line[-2:] == "/2"
+			leafed[0] = line[-2:] == "/1"
+			leafed[1] = line[-2:] == "/2"
 		elif re.match('^\+', line):
 			p_len.append(len(line))
 			plus.append(line)
 		else:
 			o_len.append(len(line))
 		i += 1
-	return (set_values(o_len, h_len, p_len, header, plus, leaved))
+	return (set_values(o_len, h_len, p_len, header, plus, leafed))
 
 def check_type(line):
 	if rqcc.check_correct_nucleotides(line):
@@ -175,9 +175,9 @@ def line_same_type(type, old_line, new_line):
 		return True
 	return False
 
-def get_lines_dictionary():
+def get_lines_dictionary(leafed):
 	return [{"filename" : file_name, "headers" : {}, \
-		"head" : info[3], leaved : False}]
+		"head" : info[3], "leafed" : leafed, "middle" : 0}]
 
 #############################################
 # Place each file into array of dictionaries
@@ -185,12 +185,11 @@ def get_lines_dictionary():
 def put_in_struct(file_name):
 	file = open(file_name, 'r')
 	info = get_info(file)
-	lines = get_lines_dictionary()
+	lines = get_lines_dictionary(info[5])
 	error_lines = []
 	i = -1
 	file.seek(0)
 	last_type = ""
-
 
 #Next: once you determine the file is interleafed, you want to add all the /2 files at the end of the array and all the /1 files sequencially, so track the head of the forward and put the reads there. Then in the main file, you split this into two distinct files in the seqs array.
 
