@@ -140,7 +140,7 @@ def set_values(o_len, h_len, p_len, header, plus, leafed):
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
 	leafed = check_leaf_status(leafed)
-	return (o_len, h_len, p_len, header, plus, leafed)
+	return (o_len, h_len, p_len, header, plus, leafed, {"last_line_type" : ""})
 
 def get_info(file):
 	o_len, h_len, p_len, header, plus = [], [], [], [], []
@@ -175,9 +175,24 @@ def line_same_type(type, old_line, new_line):
 		return True
 	return False
 
-def get_lines_dictionary(leafed):
+def init_lines_metadata_dictionary(file_name, info):
 	return [{"filename" : file_name, "headers" : {}, \
-		"head" : info[3], "leafed" : leafed, "middle" : 0}]
+		"head" : info[3], "leafed" : info[5], "middle" : 0}]
+
+def place_read_in_order(lines, line, i, label):
+	middle_index = lines[0]["middle"]
+	if label == "Header":
+		if line[-2:] == "/1":
+			lines.insert(middle_index, init_array(line))
+			lines[0]["middle"] += 1
+		else:
+			lines.append(init_array(line))
+	else:
+		if line[-2:] == "/1":
+			lines[middle_index][i] += line.rstrip()
+			lines[0]["middle"] += 1
+		else:
+			lines[-1][i] += line.rstrip()
 
 #############################################
 # Place each file into array of dictionaries
@@ -185,13 +200,14 @@ def get_lines_dictionary(leafed):
 def put_in_struct(file_name):
 	file = open(file_name, 'r')
 	info = get_info(file)
-	lines = get_lines_dictionary(info[5])
+	lines = init_lines_metadata_dictionary(file_name, info)
 	error_lines = []
 	i = -1
 	file.seek(0)
-	last_type = ""
 
 #Next: once you determine the file is interleafed, you want to add all the /2 files at the end of the array and all the /1 files sequencially, so track the head of the forward and put the reads there. Then in the main file, you split this into two distinct files in the seqs array.
+
+#Possibly want to compress the last elif & else statements into one conditional section. 
 
 	for line in file:
 		if fresh_line(line, i):
@@ -199,17 +215,17 @@ def put_in_struct(file_name):
 		if is_header(line, info):
 			i = 0
 			handle_error(lines, error_lines)
-			lines.append(init_array(line))
-			last_type = "Header"
+			info[6]["last_line_type"] = "Header"
+			place_read_in_order(lines, line, i, "Header")
 		elif is_plus(line, info):
 			i += 1
-			lines[-1][i] += line.rstrip()
-			last_type = "Plus"
+			place_read_in_order(lines, line, i, "Header")
+			info[6]["last_line_type"] = "Plus"
 		else:
-			if not line_same_type(last_type, lines[-1][i], line):
+			if not line_same_type(info[6]["last_line_type"], lines[-1][i], line):
 				i += 1
-			lines[-1][i] += line.rstrip()
-			last_type = ""
+			place_read_in_order(lines, line, i, "")
+			info[6]["last_line_type"] = ""
 	file.close()
 	handle_error(lines, error_lines)
 	error_out(file_name, error_lines)
