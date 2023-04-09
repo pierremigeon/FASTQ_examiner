@@ -140,7 +140,8 @@ def set_values(o_len, h_len, p_len, header, plus, leafed):
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
 	leafed = check_leaf_status(leafed)
-	return (o_len, h_len, p_len, header, plus, leafed, {"last_line_type" : ""})
+	return (o_len, h_len, p_len, header, plus, leafed, {"last_line_type" : "", \
+		'forward' : False})
 
 def get_info(file):
 	o_len, h_len, p_len, header, plus = [], [], [], [], []
@@ -151,8 +152,9 @@ def get_info(file):
 		if re.match('^@', line):
 			h_len.append(len(line))
 			header.append(line)
-			leafed[0] = line[-2:] == "/1"
-			leafed[1] = line[-2:] == "/2"
+			if not check_leaf_status(leafed):
+				leafed[0] = line[-3:-1] == "/1" or leafed[0]
+				leafed[1] = line[-3:-1] == "/2" or leafed[1]
 		elif re.match('^\+', line):
 			p_len.append(len(line))
 			plus.append(line)
@@ -179,26 +181,32 @@ def init_lines_metadata_dictionary(file_name, info):
 	return [{"filename" : file_name, "headers" : {}, \
 		"head" : info[3], "leafed" : info[5], "middle" : 0}]
 
-def place_read_in_order(lines, line, i, label):
-	middle_index = lines[0]["middle"]
-	if label == "Header":
-		if line[-2:] == "/1":
-			lines.insert(middle_index, init_array(line))
+def place_read_in_order(lines, line, i, info):
+	if info[6]["last_line_type"] == "Header":
+		if line[-3:-1] == "/1":
+			info[6]["forward"] = True
 			lines[0]["middle"] += 1
+			lines.insert(lines[0]["middle"], init_array(line))
 		else:
+			info[6]["forward"] = False
 			lines.append(init_array(line))
 	else:
-		if line[-2:] == "/1":
-			lines[middle_index][i] += line.rstrip()
-			lines[0]["middle"] += 1
+		if info[6]['forward'] == True:
+			lines[lines[0]["middle"]][i] += line.rstrip()
 		else:
 			lines[-1][i] += line.rstrip()
+
+def fresh_info(info):
+	info[6]["last_line_type"] = "Header"
+	info[6]['forward'] = False
+	return info
 
 #############################################
 # Place each file into array of dictionaries
 #############################################
 def put_in_struct(file_name):
 	file = open(file_name, 'r')
+	#import pdb; pdb.set_trace()
 	info = get_info(file)
 	lines = init_lines_metadata_dictionary(file_name, info)
 	error_lines = []
@@ -215,17 +223,16 @@ def put_in_struct(file_name):
 		if is_header(line, info):
 			i = 0
 			handle_error(lines, error_lines)
-			info[6]["last_line_type"] = "Header"
-			place_read_in_order(lines, line, i, "Header")
+			place_read_in_order(lines, line, i, fresh_info(info))
 		elif is_plus(line, info):
 			i += 1
-			place_read_in_order(lines, line, i, "Header")
 			info[6]["last_line_type"] = "Plus"
+			place_read_in_order(lines, line, i, info)
 		else:
 			if not line_same_type(info[6]["last_line_type"], lines[-1][i], line):
 				i += 1
-			place_read_in_order(lines, line, i, "")
 			info[6]["last_line_type"] = ""
+			place_read_in_order(lines, line, i, info)
 	file.close()
 	handle_error(lines, error_lines)
 	error_out(file_name, error_lines)

@@ -30,3 +30,8 @@ then
 	./fastq_examiner.py -f1 ./test_files/head_1 -f2 ./test_files/head_2 -i -leaf
 fi
 
+#test inputting interleafed file
+if [ $1 -eq 7 ];
+then
+	./fastq_examiner.py -f1 ./test_files/head_leaf_final.fq
+fi

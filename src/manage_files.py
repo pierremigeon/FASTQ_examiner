@@ -44,13 +44,16 @@ def output_processed_reads(seqs, leaf_flag):
 		f.close()
 
 def split_leafed(seqs):
+	print("seqs is: \n", seqs)
 	new_seqs = []
 	for i in range(0, len(seqs)):
 		if seqs[i][0]["leafed"]:
 			new_seqs.append(seqs[i][0:seqs[i][0]["middle"]])
-			new_seqs.append(seqs[i][0] + seqs[i][seqs[i][0]["middle"]:-1])
+			new_seqs.append([seqs[i][0]] + seqs[i][seqs[i][0]["middle"]:-1])
 		else:
 			new_seqs.append(seqs) 
+		print("New Seqs is:")
+		print(new_seqs)
 		return new_seqs
 
 def remove_singletons(seqs):
