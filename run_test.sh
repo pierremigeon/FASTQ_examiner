@@ -35,3 +35,9 @@ if [ $1 -eq 7 ];
 then
 	./fastq_examiner.py -f1 ./test_files/head_leaf_final.fq
 fi
+
+#test inputting interleafed file
+if [ $1 -eq 8 ];
+then
+	./fastq_examiner.py -f1 ./test_files/head_leaf_final.fq -leaf
+fi
