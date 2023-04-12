@@ -1,4 +1,7 @@
 #!/bin/bash
+####################
+##  Old tests...  ##
+####################
 
 if [ $1 -eq 1 ];
 then 
@@ -41,3 +44,22 @@ if [ $1 -eq 8 ];
 then
 	./fastq_examiner.py -f1 ./test_files/head_leaf_final.fq -leaf
 fi
+
+##########################
+##  More formal tests:  ##
+##########################
+#setup to output to the directory the reads are found in 
+#Wrapped tests
+if [ $1 -eq 9 ];
+then
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap37_F.fq ./test_files/wrapped_reads/wrap37_R.fq
+fi
+
+if [ $1 -eq 10 ];
+then
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap37_F.fq ./test_files/wrapped_reads/wrap37_R.fq -leaf
+fi
+
+
+
+
