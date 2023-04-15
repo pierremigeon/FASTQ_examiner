@@ -12,7 +12,9 @@ import os
 
 def get_file_out_name(original_file_name, extension):
 	out_name = os.path.splitext(os.path.basename(original_file_name))[0]
-	out_name = './out/' + out_name + extension
+	if not os.path.isdir('./out/' + out_name):
+		os.mkdir('./out/' + out_name)
+	out_name = './out/' + out_name + '/' + out_name + extension
 	return out_name
 
 def get_common_name(name_1, name_2):
