@@ -5,7 +5,7 @@
 
 if [ $1 -eq 1 ];
 then 
-	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i
+	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i -nv
 fi
 
 if [ $1 -eq 2 ];

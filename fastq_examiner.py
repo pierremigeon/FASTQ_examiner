@@ -20,6 +20,7 @@ import src.put_in_struct as pis
 import src.run_QC_checks as rqcc
 import src.run_graphs as rg
 import src.manage_files as mf
+from src.generate_table import generate_summary_table
 
 ######################################
 #  Help/Usage formatting and get args
@@ -77,12 +78,12 @@ def main():
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	seqs = mf.split_leafed(seqs)
-	#Summary_table(seqs) (coming soon)
 	mf.order_files(seqs)
-	if not args.nv:
-		rg.run_graphs(files, args.plot_num, seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
+	generate_summary_table(seqs)
+	if not args.nv:
+		rg.run_graphs(files, args.plot_num, seqs)
 	print("Run Successful\n")
 
 ######################################

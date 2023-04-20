@@ -63,11 +63,7 @@ def error_out(file_name, error_lines):
 # Even if the lines are found out of order
 ########
 #TO DO LIST:
-# I would like to run tests on these error detection steps to verify correct function. 
-# I would like to collect summary statistics and output these to tables, collecting data as the reads are read.
 # I would like to detect if headers are inconsistent within the file and between files,
-# Paired reads can be interleafed as well. Or they can all be output as is, minus the error reads.
-#
 
 from difflib import SequenceMatcher
 
@@ -169,18 +165,22 @@ def check_type(line):
 		return "Seq"
 	return "Qual"
 
-def line_same_type(type, old_line, new_line):
+def line_same_type(info, lines, i, new_line):
+	old_line = lines[-1][i]
+	type = info[6]["last_line_type"]
 	if type != "":
 		return False
 	type_1 = check_type(old_line)
 	type_2 = check_type(new_line)
 	if type_1 == type_2:
+		lines[0]["wrapped"] += 1
 		return True
 	return False
 
 def init_lines_metadata_dictionary(file_name, info):
-	return [{"filename" : file_name, "headers" : {}, \
-		"head" : info[3], "leafed" : info[5], "middle" : 0}]
+	return [{"filename":file_name, "headers":{}, \
+		"head":info[3], "leafed":info[5], "middle":0, \
+		"wrapped":0}]
 
 def place_read_in_order(lines, line, i, info):
 	if info[6]["last_line_type"] == "Header":
@@ -223,7 +223,7 @@ def put_in_struct(file_name):
 		else:
 			if j := is_plus(line, info):
 				info[6]["last_line_type"] = "Plus"
-			if not line_same_type(info[6]["last_line_type"], lines[-1][i], line):
+			if not line_same_type(info, lines, i, line):
 				i += 1
 			if not j:
 				info[6]["last_line_type"] = ""
