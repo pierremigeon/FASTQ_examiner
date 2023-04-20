@@ -30,6 +30,7 @@ def handle_error(lines, error_lines):
 	if is_error(lines[-1]):
 		error_lines.append(lines[-1])
 		lines.pop()
+		lines[0]["middle"] -= 1
 	else:
 		lines[0]["headers"][lines[-1][0]] = len(lines) - 2
 
@@ -216,7 +217,6 @@ def put_in_struct(file_name):
 #Next: once you determine the file is interleafed, you want to add all the /2 files at the end of the array and all the /1 files sequencially, so track the head of the forward and put the reads there. Then in the main file, you split this into two distinct files in the seqs array.
 
 #Possibly want to compress the last elif & else statements into one conditional section. 
-
 	for line in file:
 		if fresh_line(line, i):
 			error_lines.append(line)

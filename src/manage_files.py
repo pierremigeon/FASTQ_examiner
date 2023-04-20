@@ -77,9 +77,9 @@ def order_files(seqs):
 	seqs.sort(key=lambda x: x[0]['head'])
 	for i in reversed(range(0, len(seqs))):
 		seqs[i][0]["paired"] = True
-		if seqs[i][0]["head"] not in seqs[i - 1][0]["head"] \
+		if i == 0 or seqs[i][0]["head"] not in seqs[i - 1][0]["head"] \
 			and seqs[i - 1][0]["head"] not in seqs[i][0]["head"]:
-				if i == len(seqs) or seqs[i][0]["head"] not in seqs[i + 1][0]["head"] \
+				if i + 1 == len(seqs) or seqs[i][0]["head"] not in seqs[i + 1][0]["head"] \
 					and seqs[i + 1][0]["head"] not in seqs[i][0]["head"]:
 						seqs[i][0]["paired"] = False
 						seqs.append(seqs.pop(i))

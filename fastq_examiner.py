@@ -15,7 +15,6 @@
 #############################################@
 import sys
 import argparse
-import pdb
 #############################################
 import src.put_in_struct as pis
 import src.run_QC_checks as rqcc
