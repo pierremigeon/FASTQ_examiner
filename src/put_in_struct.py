@@ -207,16 +207,12 @@ def fresh_info(info):
 #############################################
 def put_in_struct(file_name):
 	file = open(file_name, 'r')
-	#import pdb; pdb.set_trace()
 	info = get_info(file)
 	lines = init_lines_metadata_dictionary(file_name, info)
 	error_lines = []
 	i = -1
 	file.seek(0)
 
-#Next: once you determine the file is interleafed, you want to add all the /2 files at the end of the array and all the /1 files sequencially, so track the head of the forward and put the reads there. Then in the main file, you split this into two distinct files in the seqs array.
-
-#Possibly want to compress the last elif & else statements into one conditional section. 
 	for line in file:
 		if fresh_line(line, i):
 			error_lines.append(line)
@@ -224,14 +220,13 @@ def put_in_struct(file_name):
 			i = 0
 			handle_error(lines, error_lines)
 			place_read_in_order(lines, line, i, fresh_info(info))
-		elif is_plus(line, info):
-			i += 1
-			info[6]["last_line_type"] = "Plus"
-			place_read_in_order(lines, line, i, info)
 		else:
+			if j := is_plus(line, info):
+				info[6]["last_line_type"] = "Plus"
 			if not line_same_type(info[6]["last_line_type"], lines[-1][i], line):
 				i += 1
-			info[6]["last_line_type"] = ""
+			if not j:
+				info[6]["last_line_type"] = ""
 			place_read_in_order(lines, line, i, info)
 	file.close()
 	handle_error(lines, error_lines)
