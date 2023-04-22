@@ -21,6 +21,7 @@ import src.run_QC_checks as rqcc
 import src.run_graphs as rg
 import src.manage_files as mf
 from src.generate_table import generate_summary_table
+import tabulate
 
 ######################################
 #  Help/Usage formatting and get args
