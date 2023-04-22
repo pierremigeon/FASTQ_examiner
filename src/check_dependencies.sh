@@ -1,14 +1,14 @@
 #!/usr/bin/bash
 ###################################################################################################
-# Description: Check for all python dependencies and install. Requires pip3			  #
-# Usage: to run script, execute '.  check_dependencies.sh' or 'source check_dependencies.sh'	  #
+# Description: Check for all python dependencies and install. 					  #
+# Usage: to run script, execute '(.  check_dependencies.sh)' or '(source check_dependencies.sh)'  #
 # Author: Pierre Migeon April 2023								  #
+# Works for python projects, assumes run in /src/ with ../main.py				  #
 ###################################################################################################
 
-if [[ ! $(which pip3) ]]; then
+if [[ $(which pip3) ]]; then
 	echo "pip3 is not installed. Install to continue.";
-	read -n 1 -p "Install? (y/n)" install_check;
-	echo;
+	read -n 1 -p "Install and continue? (y/n) " install_check; echo;
 	if [ $install_check == 'y' ]; then
 		python3 -m ensurepip;
 	else
