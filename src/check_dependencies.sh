@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 ###################################################################################################
 # Description: Check for all python dependencies and install. 					  #
-# Usage: to run script, execute '(.  check_dependencies.sh)' or '(source check_dependencies.sh)'  #
+# Usage: to run script, execute 'bash check_dependencies.sh' 					  #
 # Author: Pierre Migeon April 2023								  #
 # Works for python projects, assumes run in /src/ with ../main.py				  #
 ###################################################################################################
@@ -21,12 +21,9 @@ then
 	pip3 install pipreqs
 fi
 
-#Alias pipreqs command
-alias pipreqs='python3 -m pipreqs.pipreqs'
-
 #run pipreqs to generate requirements file
-pipreqs ..
-pipreqs .
+python3 -m pipreqs.pipreqs ..
+python3 -m pipreqs.pipreqs .
 cat ../requirements.txt >> ./requirements.txt
 cat ./requirements.txt | sort | uniq > tmp.txt
 mv tmp.txt ./requirements.txt
