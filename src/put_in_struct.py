@@ -6,7 +6,7 @@
 #############################################@
 import re
 import os
-import src.run_QC_checks as rqcc
+from src import run_QC_checks as rqcc
 from functools import reduce 
 #import pdb; pdb.set_trace()
 

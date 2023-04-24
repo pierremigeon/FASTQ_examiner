@@ -16,12 +16,11 @@
 import sys
 import argparse
 #############################################
-import src.put_in_struct as pis
-import src.run_QC_checks as rqcc
-import src.run_graphs as rg
-import src.manage_files as mf
+from src import put_in_struct as pis
+from src import run_QC_checks as rqcc
+from src import run_graphs as rg
+from src import manage_files as mf
 from src.generate_table import generate_summary_table
-import tabulate
 
 ######################################
 #  Help/Usage formatting and get args

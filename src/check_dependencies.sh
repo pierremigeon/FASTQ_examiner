@@ -27,10 +27,10 @@ python3 -m pipreqs.pipreqs .
 cat ../requirements.txt >> ./requirements.txt
 cat ./requirements.txt | sort | uniq > tmp.txt
 mv tmp.txt ./requirements.txt
-rm ../requirements.txt
+#rm ../requirements.txt
 
 #Install requirements
 pip3 install -r requirements.txt
 
 #remove requirements file:
-rm requirements.txt
+#rm requirements.txt
