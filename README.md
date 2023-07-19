@@ -1,3 +1,6 @@
+#### Status update 7/18/23:
+I've been working on C/C++ projects for a few weeks and I'm jumping back into this now. I just noticed that the tests are currenlty broken. I am reviewing the issue and it should be working correctly within the next few days. 
+
 # FASTQ_examiner
 ### A tool to filter and produce summary statistics and charts for FASTQ files
 
