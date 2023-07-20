@@ -1,10 +1,14 @@
-#### Status update 7/18/23:
-I've been working on C/C++ projects for a few weeks and I'm jumping back into this now. I just noticed that the tests are currenlty broken. I am reviewing the issue and it should be working correctly within the next few days. 
+#### Status update 7/20/23:
+I've been working on C/C++ projects for a few weeks and I'm jumping back into this (at least briefly to polish it). I noticed that some of the tests were broken, so I've updated several of them now so that the curious may run the program to get an idea for how it works.
+
+Running demo/tests:
+```
+bash run_test.sh [0-8]
+```
+simply run the above bash script with a number between 0-8. Tests above 8 demonstrate the program fails using wrapped input files, so this is the next priority fix.
 
 # FASTQ_examiner
 ### A tool to filter and produce summary statistics and charts for FASTQ files
-
-#### Status update: As of 1/2/23 I've begun fiddling around with this code again. My objective is to shift to using python as my primary language, since both C and Perl are a bit outdated at this point.
 
 *tool in developement...*
 
