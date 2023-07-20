@@ -30,7 +30,7 @@ def get_args():
 		add_help = False,
 		formatter_class = lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position = 80),
 		description="""Description: Check the validity of FASTQ files, correct formating errors, and produce summary statistics.""", 
-		epilog="""Created by Pierre Migeon, updated winter 2023
+		epilog="""Created by Pierre Migeon, most recent update summer 2023
 		\n"""
 		)
 	help_arguments = parser.add_argument_group('help arguments')

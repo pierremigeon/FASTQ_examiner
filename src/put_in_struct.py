@@ -37,7 +37,8 @@ def handle_error(lines, error_lines):
 def init_array(line):
 	return [line.rstrip(), "", "", "", ]
 
-def error_out(file_name, error_lines):
+def error_out(lines, file_name, error_lines):
+	lines[0]["error_reads"] = 0;
 	if len(error_lines) == 0:
 		return
 	read_count = 0 
@@ -52,6 +53,7 @@ def error_out(file_name, error_lines):
 			if "\n" in line:
 				newline = 0
 			out.write(line + ("\n" * newline))
+	lines[0]["error_reads"] = read_count
 	print("%d reads from file %s were determined to be erroneous, removed, and placed in %s" % (read_count, fname_base, out_file_name))
 
 # this handles/detects reads that are:
@@ -230,5 +232,5 @@ def put_in_struct(file_name):
 			place_read_in_order(lines, line, i, info)
 	file.close()
 	handle_error(lines, error_lines)
-	error_out(file_name, error_lines)
+	error_out(lines, file_name, error_lines)
 	return (lines)
