@@ -1,11 +1,15 @@
 #### Status update 7/20/23:
 I've been working on C/C++ projects for a few weeks and I'm jumping back into this (at least briefly to polish it). I noticed that some of the tests were broken, so I've updated several of them now so that the curious may run the program to get an idea for how it works.
 
-Running demo/tests:
 ```
+#check missing requirements and install:
+cd ./src
+bash check_dependencies.sh
+#Running demo/tests (from base directory):
 bash run_test.sh [0-8]
 ```
-simply run the above bash script with a number between 0-8. Tests above 8 demonstrate the program fails using wrapped input files, so this is the next priority fix.
+
+Check and instal any missing tests using ./src/check_dependencies.sh script. Use the run_test.sh script with a number between 0-8 to run demo tests. Tests above 8 demonstrate the program fails using wrapped input files, so this is the next priority fix.
 
 # FASTQ_examiner
 ### A tool to filter and produce summary statistics and charts for FASTQ files
