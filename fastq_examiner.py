@@ -41,7 +41,7 @@ def get_args():
 	parser.add_argument('-f2', '--reverse', dest='fastq_2', help="""\tThe path to the second fastq""", required=False)
 	parser.add_argument('-c', help="""\tcorrect invalid files""")
 	parser.add_argument('-q', help="""\tcheck validity of files and then exit""")
-	parser.add_argument('-i', '--plot_individual', dest='plot_num', help="""\tproduce individual summary plots""", required=False, action='store_true')
+	parser.add_argument('-f', '--full', dest='plot_num', help="""\toutput all plots""", required=False, action='store_true')
 	parser.add_argument('-nv', help="""\tSuppress graphical output""", required=False, action='store_true')
 	parser.add_argument('-leaf', help="""\tPaired reads are output in interleaved format""", required=False, action='store_true')
 	if '-h' or '--help' in sys.argv:

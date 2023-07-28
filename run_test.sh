@@ -6,7 +6,7 @@
 #no visual test
 if [ $1 -eq 1 ];
 then 
-	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i -nv
+	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -f -nv
 fi
 
 #standard run paired reads with graphical output
@@ -18,7 +18,7 @@ fi
 #standard run paired reads with graphical output and individual graphs (by file)
 if [ $1 -eq 3 ];
 then 
-	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i 
+	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -f 
 fi
 
 #outputs non-interleaved reads as interleafed to directory ./out/C1
