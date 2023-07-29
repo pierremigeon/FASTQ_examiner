@@ -72,6 +72,7 @@ def remove_singletons(seqs):
 				with open(names[j], 'w') as f:
 					f.write("\n".join(list(chain.from_iterable(out[j]))) + '\n')
 				f.close()
+			seqs[j][0]["singletons"] = len(out[j])
 
 def order_files(seqs):
 	seqs.sort(key=lambda x: x[0]['head'])
