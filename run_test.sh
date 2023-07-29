@@ -12,7 +12,7 @@ fi
 #no visual test
 if [ $1 -eq 2 ];
 then 
-	./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq -i -nv
+	./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq -f -nv
 fi
 
 #standard run paired reads with graphical output
