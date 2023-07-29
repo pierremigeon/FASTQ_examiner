@@ -182,7 +182,7 @@ def line_same_type(info, lines, i, new_line):
 def init_lines_metadata_dictionary(file_name, info):
 	return [{"filename":file_name, "headers":{}, \
 		"head":info[3], "leafed":info[5], "middle":0, \
-		"wrapped":0}]
+		"wrapped":0, "singletons":0}]
 
 def place_read_in_order(lines, line, i, info):
 	if info[6]["last_line_type"] == "Header":
