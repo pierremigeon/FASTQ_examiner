@@ -23,10 +23,10 @@ then
 	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq -i -nv
 fi
 
-#input f/r fastq with no flags, as positional arguments, 3 input files:
+#input f/r fastq with no flags, as positional arguments, more than 2 input files:
 if [ $1 -eq 0 ];
 then 
-	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq test_files/singleton_reads/singleton_test_f1.fq -i -nv
+	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq -i -nv
 fi
 
 #no visual test

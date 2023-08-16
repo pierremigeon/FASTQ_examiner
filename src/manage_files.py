@@ -56,6 +56,10 @@ def split_leafed(seqs):
 			new_seqs = seqs 
 		return new_seqs
 
+#testing note: when you have multiple files that are almost identical, it confuses the pairing detection.
+#How should the program handle this type of input? Probably want to indicate to the user repeated files 
+#probably want to just retain one of the files for analysis.
+
 def remove_singletons(seqs):
 	names, sets, out = [], [], []
 	for i in range(0, len(seqs), 2):
