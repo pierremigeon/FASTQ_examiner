@@ -78,13 +78,34 @@ def remove_singletons(seqs):
 				f.close()
 			seqs[j][0]["singletons"] = len(out[j])
 
-def order_files(seqs):
+def compare_keys(dictionary, seqs, i):
+	for key in dictionary:
+		if key in info['head']:
+			return ( 1 )
+
+def compare_keys(seqs, i):
+	if i == 0 or seqs[i][0]["head"] not in seqs[i - 1][0]["head"] \
+		and seqs[i - 1][0]["head"] not in seqs[i][0]["head"]:
+			if i + 1 == len(seqs) or seqs[i][0]["head"] not in seqs[i + 1][0]["head"] \
+				and seqs[i + 1][0]["head"] not in seqs[i][0]["head"]:
+					return (0)
+	return (1);
+
+def trim_and_order_files(seqs):
+	dictionary = {}
+	#import pdb;
+	#pdb.set_trace()
+
 	seqs.sort(key=lambda x: x[0]['head'])
 	for i in reversed(range(0, len(seqs))):
-		seqs[i][0]["paired"] = True
-		if i == 0 or seqs[i][0]["head"] not in seqs[i - 1][0]["head"] \
-			and seqs[i - 1][0]["head"] not in seqs[i][0]["head"]:
-				if i + 1 == len(seqs) or seqs[i][0]["head"] not in seqs[i + 1][0]["head"] \
-					and seqs[i + 1][0]["head"] not in seqs[i][0]["head"]:
-						seqs[i][0]["paired"] = False
-						seqs.append(seqs.pop(i))
+		seqs[i][0]["paired"] = False
+		if not compare_keys(seqs, i):
+			seqs[i][0]["paired"] = False
+			seqs.append(seqs.pop(i))
+		elif seqs[i][0]["head"] in dictionary:
+			if seqs[i][0]["direction"] == dictionary[seqs[i][0]["head"]]["direction"]:
+				seqs.pop(i)
+				continue
+		else:
+			seqs[i][0]["paired"] = True
+		dictionary[seqs[i][0]["head"]] = {"direction":seqs[i][0]["direction"]}
