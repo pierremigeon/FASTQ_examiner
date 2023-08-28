@@ -83,7 +83,7 @@ def main():
 	seqs = trim_empty(seqs)
 	seqs = mf.split_leafed(seqs)
 	#import pdb; pdb.set_trace()
-	mf.trim_and_order_files(seqs)
+	mf.pair_and_order_files(seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
 	generate_summary_table(seqs)
