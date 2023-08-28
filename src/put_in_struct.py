@@ -138,7 +138,8 @@ def set_values(o_len, h_len, p_len, header, plus, leafed):
 	p_len = max(set(p_len), key=p_len.count)
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
-	leafed = check_leaf_status(leafed)
+	#leafed = check_leaf_status(leafed)
+	
 	return (o_len, h_len, p_len, header, plus, leafed, {"last_line_type" : "", \
 		'forward' : False})
 
@@ -179,10 +180,17 @@ def line_same_type(info, lines, i, new_line):
 		return True
 	return False
 
+def	get_direction(lines):
+	if lines[0] and lines[1] or not lines[0] and not lines[1]:
+		return "None"
+	if lines[0]:
+		return "Forward"
+	return "Reverse"
+
 def init_lines_metadata_dictionary(file_name, info):
 	return [{"filename":file_name, "headers":{}, \
-		"head":info[3], "leafed":info[5], "middle":0, \
-		"wrapped":0, "singletons":0}]
+		"head":info[3], "leafed":check_leaf_status(info[5]), "middle":0, \
+		"wrapped":0, "singletons":0, "direction":get_direction(info[5])}]
 
 def place_read_in_order(lines, line, i, info):
 	if info[6]["last_line_type"] == "Header":

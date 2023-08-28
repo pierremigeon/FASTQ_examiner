@@ -56,6 +56,10 @@ def split_leafed(seqs):
 			new_seqs = seqs 
 		return new_seqs
 
+#testing note: when you have multiple files that are almost identical, it confuses the pairing detection.
+#How should the program handle this type of input? Probably want to indicate to the user repeated files 
+#probably want to just retain one of the files for analysis.
+
 def remove_singletons(seqs):
 	names, sets, out = [], [], []
 	for i in range(0, len(seqs), 2):
@@ -74,13 +78,42 @@ def remove_singletons(seqs):
 				f.close()
 			seqs[j][0]["singletons"] = len(out[j])
 
-def order_files(seqs):
+def compare_base(str1, str2):
+	return ( str1 in str2 or str2 in str1 )
+
+def compare_keys(seqs, i, key):
+	if i == 0 or not compare_base(seqs[i][0][key], seqs[i - 1][0][key]):
+		if i + 1 == len(seqs) or not compare_base(seqs[i][0][key], seqs[i + 1][0][key]):
+			return (0)
+	return (1);
+
+def compare_dictionary(str1, direction, dictionary):
+	if  str1 in dictionary:
+		if direction in dictionary[str1]: 
+			return (1)
+	for str2 in dictionary:
+		if compare_base(str1, str2):
+			if direction in dictionary[str2]:
+				return (1)
+	return (0)
+
+def trim_files(seqs):
+	seqs.sort(key=lambda x: len(x[0]['headers']))
+	dictionary = {}
+	for i in reversed(range(0, len(seqs))):
+		if compare_dictionary(seqs[i][0]['head'], seqs[i][0]['direction'], dictionary):
+			seqs.pop(i)
+			continue
+		dictionary[seqs[i][0]['head']] = { seqs[i][0]['direction'] : 1 }
+
+def pair_and_order_files(seqs):
+	trim_files(seqs)	
 	seqs.sort(key=lambda x: x[0]['head'])
 	for i in reversed(range(0, len(seqs))):
-		seqs[i][0]["paired"] = True
-		if i == 0 or seqs[i][0]["head"] not in seqs[i - 1][0]["head"] \
-			and seqs[i - 1][0]["head"] not in seqs[i][0]["head"]:
-				if i + 1 == len(seqs) or seqs[i][0]["head"] not in seqs[i + 1][0]["head"] \
-					and seqs[i + 1][0]["head"] not in seqs[i][0]["head"]:
-						seqs[i][0]["paired"] = False
-						seqs.append(seqs.pop(i))
+		seqs[i][0]["paired"] = False
+		if not compare_keys(seqs, i, "head"):
+			seqs.append(seqs.pop(i))
+		else:
+			seqs[i][0]["paired"] = True
+
+

@@ -3,6 +3,35 @@
 ##  Old tests...  ##
 ####################
 
+#input f/r fastq with no flags, as positional arguments, no input files
+if [ $1 -eq -3 ];
+then 
+	./fastq_examiner.py -f -nv
+fi
+
+#no visual test
+#input f/r fastq with no flags, as positional arguments, one input file
+if [ $1 -eq -2 ];
+then 
+	./fastq_examiner.py ./test_files/C1.1.fastq -f -nv
+fi
+
+#no visual test
+#input f/r fastq with no flags, as positional arguments, two input files
+if [ $1 -eq -1 ];
+then 
+	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq -f -nv
+fi
+
+#input f/r fastq with no flags, as positional arguments, more than 2 input files:
+if [ $1 -eq 0 ];
+then 
+	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq -f -nv
+fi
+
+#no visual test
+
+
 #no visual test
 if [ $1 -eq 1 ];
 then 

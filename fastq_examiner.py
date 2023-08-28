@@ -37,7 +37,8 @@ def get_args():
 	help_arguments.add_argument('-h', '--help', action='help', help='\tshow this help message and exit.')
 	help_arguments.add_argument('-v', '--version', action='version', help='\tshow the current program version.')
 	help_arguments.add_argument('-e', '--email', help='\tsend an email to the program author')
-	parser.add_argument('-f1', '--forward', dest='fastq_1', help="""\tThe path to the first fastq""", required=True)
+	parser.add_argument('fastq_1', nargs='*')
+	parser.add_argument('-f1', '--forward', dest='fastq_1', help="""\tThe path to the first fastq""", required=False)
 	parser.add_argument('-f2', '--reverse', dest='fastq_2', help="""\tThe path to the second fastq""", required=False)
 	parser.add_argument('-c', help="""\tcorrect invalid files""")
 	parser.add_argument('-q', help="""\tcheck validity of files and then exit""")
@@ -66,19 +67,23 @@ def trim_empty(seqs):
 def main():
 	args = get_args()
 	files = []
+	
 	forward_file = args.fastq_1
-	files.append(forward_file)
+	for file in args.fastq_1:
+		files.append(file)
 	if args.fastq_2:
 		reverse_file = args.fastq_2 
 		files.append(reverse_file)
 	seqs = []
 	for file in files:
+		print(file)
 		seqs.append(pis.put_in_struct(file))
 	if is_empty(seqs):
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	seqs = mf.split_leafed(seqs)
-	mf.order_files(seqs)
+	#import pdb; pdb.set_trace()
+	mf.pair_and_order_files(seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
 	generate_summary_table(seqs)
