@@ -24,7 +24,7 @@ sub wrap_reads {
 	open(OFH, '>', $ofh);
 	print OFH "#ORIGINAL FILE: ${fh}\n";
 	while(<FH>) {
-		if ($_ !~ m/^[@+]HWI-ST/) {
+		if ($_ !~ m/^[@\+]HWI-ST/) {
 			my @a = ($_ =~ /.{1,$len}/g);
 			foreach (@a) {
 				print OFH "$_\n";

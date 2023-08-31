@@ -7,9 +7,6 @@
 from itertools import chain
 import os
 
-# Tests to write: 
-# 	1) Does the sorting of the paired lists work?
-
 def get_file_out_name(original_file_name, extension):
 	out_name = os.path.splitext(os.path.basename(original_file_name))[0]
 	if not os.path.isdir('./out/' + out_name):
@@ -23,6 +20,7 @@ def get_common_name(name_1, name_2):
 		common = common.rstrip('_')
 	return common
 
+#does this still work if you have a mix of leaved and interleaved files? 
 def interleaf(seqs):
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:	
@@ -115,5 +113,3 @@ def pair_and_order_files(seqs):
 			seqs.append(seqs.pop(i))
 		else:
 			seqs[i][0]["paired"] = True
-
-

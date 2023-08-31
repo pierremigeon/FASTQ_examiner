@@ -8,7 +8,6 @@ import re
 import os
 from src import run_QC_checks as rqcc
 from functools import reduce 
-#import pdb; pdb.set_trace()
 
 def is_error(line):
 	if len(line) != 4:
@@ -82,13 +81,6 @@ def longest_common_substring_percentage(s1 : str, s2 : str) -> float:
 		return 0
 	return len(longest_common_substring(s1, s2)) / min(len(s1), len(s2))
 
-def fresh_line(line, i):
-	if i >= 0:
-		return False
-	if not re.match('^@', line):
-		if not line.startswith("#"):
-			return True
-
 def is_plus(line, info):
 	if not re.match('^\+', line):
 		return False
@@ -136,6 +128,7 @@ def set_values(o_len, h_len, p_len, header, plus, leafed):
 	o_len = max(set(o_len), key=o_len.count)
 	h_len = max(set(h_len), key=h_len.count)
 	p_len = max(set(p_len), key=p_len.count)
+	#import pdb; pdb.set_trace()
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
 	#leafed = check_leaf_status(leafed)
@@ -180,7 +173,7 @@ def line_same_type(info, lines, i, new_line):
 		return True
 	return False
 
-def	get_direction(lines):
+def get_direction(lines):
 	if lines[0] and lines[1] or not lines[0] and not lines[1]:
 		return "None"
 	if lines[0]:
@@ -212,10 +205,17 @@ def fresh_info(info):
 	info[6]['forward'] = False
 	return info
 
+def init_line(line, i):
+	if i >= 0:
+		return False
+	if not re.match('^@', line):
+		return True
+
 #############################################
 # Place each file into array of dictionaries
 #############################################
 def put_in_struct(file_name):
+	#import pdb; pdb.set_trace()
 	file = open(file_name, 'r')
 	info = get_info(file)
 	lines = init_lines_metadata_dictionary(file_name, info)
@@ -224,8 +224,9 @@ def put_in_struct(file_name):
 	file.seek(0)
 
 	for line in file:
-		if fresh_line(line, i):
+		if init_line(line, i):
 			error_lines.append(line)
+			continue
 		if is_header(line, info):
 			i = 0
 			handle_error(lines, error_lines)

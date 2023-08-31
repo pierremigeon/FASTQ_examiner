@@ -93,23 +93,23 @@ fi
 #37 lines wrap
 if [ $1 -eq 10 ];
 then
-	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap37_F.fq -f2 ./test_files/wrapped_reads/wrap37_R.fq
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap18_F.fq -f2 ./test_files/wrapped_reads/wrap18_R.fq
 fi
 
 #37 lines wrap with leaf output
 if [ $1 -eq 11 ];
 then
-	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap37_F.fq -f2 ./test_files/wrapped_reads/wrap37_R.fq -leaf
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap18_F.fq -f2 ./test_files/wrapped_reads/wrap18_R.fq -leaf
 fi
 
 #17 lines wrap
 if [ $1 -eq 12 ];
 then
-	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap17_F.fq -f2 ./test_files/wrapped_reads/wrap17_R.fq
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap18_F.fq -f2 ./test_files/wrapped_reads/wrap18_R.fq
 fi
 
 #17 lines wrap with leaf output
 if [ $1 -eq 13 ];
 then
-	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap17_F.fq -f2 ./test_files/wrapped_reads/wrap17_R.fq -leaf
+	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap18_F.fq -f2 ./test_files/wrapped_reads/wrap18_R.fq -leaf
 fi
