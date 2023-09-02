@@ -109,6 +109,7 @@ def is_header(line, info):
 def get_common_string(header, tag):
 	average_len = round(reduce(lambda x, y: x + y, map(len, header)) / len(header))
 	substr = ""
+	header = [ seq for seq in header if len(seq) > 0.8 * average_len ]
 	zip_list = list(zip(*header))
 	for i in range(average_len):
 		common_letter = max(set(zip_list[i]), key=zip_list[i].count)
@@ -164,14 +165,15 @@ def check_type(line):
 def line_same_type(info, lines, i, new_line):
 	old_line = lines[-1][i]
 	type = info[6]["last_line_type"]
+	if type == "Plus" and i == 3:
+		return True
 	if type != "":
 		return False
 	type_1 = check_type(old_line)
 	type_2 = check_type(new_line)
 	if type_1 == type_2:
 		lines[0]["wrapped"] += 1
-		return True
-	return False
+	return True
 
 def get_direction(lines):
 	if lines[0] and lines[1] or not lines[0] and not lines[1]:
