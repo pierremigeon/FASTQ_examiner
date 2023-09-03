@@ -11,6 +11,20 @@ import os
 #############################################
 ## %N Basecalls / Base Graph Functions
 #############################################
+def plot_total_ns(N_count, file_name):
+	max_length = N_count.argmin()
+	plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #, linestyle='dashed')
+	plt.xlabel("Position in Read")
+	plt.ylabel("Percent N")
+	if file_name:
+		plt.title("%%N by length of read for %s" % file_name)
+	else:
+		plt.title("%N by length of read cumulative for all files")
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
+	plt.show()
+
 #This is to summarize the bases where Ns were found.
 def summarize_ns(file, plot_number):
 	N_count = np.zeros((1500,), dtype=float)
@@ -27,26 +41,8 @@ def summarize_ns(file, plot_number):
 		if j > max_length:
 			max_length = j
 	if plot_number:
-		plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #linestyle='dashed')
-		plt.xlabel("Position in Read")
-		plt.ylabel("Percent N")
-		plt.title("%%N by length of read for %s" % os.path.basename(file_name))
-		plt.minorticks_on()
-		plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
-		plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
-		plt.show()
+		plot_ns(N_count, os.path.basename(file_name))
 	return(N_count)
-
-def plot_total_ns(N_count):
-	max_length = N_count.argmin()
-	plt.plot(100 * (N_count[0:max_length] / N_count[750:max_length + 750]), color = 'mediumblue') #, linestyle='dashed')
-	plt.xlabel("Position in Read")
-	plt.ylabel("Percent N")
-	plt.title("%N by length of read cumulative for all files")
-	plt.minorticks_on()
-	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
-	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
-	plt.show()
 
 ##########################################################
 #  Number / Total Read Length Graph Functions
@@ -191,11 +187,11 @@ def quality_by_base(seqs, print_num):
 ######################################
 #  	Run Quality Graphs
 ######################################
-def run_graphs(files, print_num, seqs):
+def run_graphs(print_num, seqs):
 	total_ns = np.zeros((1500,), dtype=float)
 	for file in seqs:
 		total_ns += summarize_ns(file, print_num)
-	plot_total_ns(total_ns)
+	plot_total_ns(total_ns, "")
 	percent_gc(seqs, print_num)
 	number_of_x_length(seqs, print_num)
 	quality_by_base(seqs, print_num)

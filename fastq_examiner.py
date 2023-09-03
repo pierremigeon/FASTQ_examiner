@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 
 #############################################@
 #@
 #	FASTQ_EXAMINER
@@ -38,8 +38,8 @@ def get_args():
 	help_arguments.add_argument('-v', '--version', action='version', help='\tshow the current program version.')
 	help_arguments.add_argument('-e', '--email', help='\tsend an email to the program author')
 	parser.add_argument('fastq_1', nargs='*')
-	parser.add_argument('-f1', '--forward', dest='fastq_1', help="""\tThe path to the first fastq""", required=False)
-	parser.add_argument('-f2', '--reverse', dest='fastq_2', help="""\tThe path to the second fastq""", required=False)
+	parser.add_argument('-f1', '--forward', dest='fastq_2', help="""\tThe path to the first fastq""", required=False)
+	parser.add_argument('-f2', '--reverse', dest='fastq_3', help="""\tThe path to the second fastq""", required=False)
 	parser.add_argument('-c', help="""\tcorrect invalid files""")
 	parser.add_argument('-q', help="""\tcheck validity of files and then exit""")
 	parser.add_argument('-f', '--full', dest='plot_num', help="""\toutput all plots""", required=False, action='store_true')
@@ -66,19 +66,12 @@ def trim_empty(seqs):
 ######################################
 def main():
 	args = get_args()
-	files = []
+	seqs = []
 
 	#import pdb; pdb.set_trace()	
-	forward_file = args.fastq_1
-	for file in args.fastq_1:
-		files.append(file)
-	if args.fastq_2:
-		reverse_file = args.fastq_2 
-		files.append(reverse_file)
-	seqs = []
-	for file in files:
-		print(file)
-		seqs.append(pis.put_in_struct(file))
+	for file in [ *args.fastq_1, args.fastq_2, args.fastq_3 ]:
+		if file:
+			seqs.append(pis.put_in_struct(file))
 	if is_empty(seqs):
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
@@ -88,7 +81,7 @@ def main():
 	mf.output_processed_reads(seqs, args.leaf)
 	generate_summary_table(seqs)
 	if not args.nv:
-		rg.run_graphs(files, args.plot_num, seqs)
+		rg.run_graphs(args.plot_num, seqs)
 	print("Run Successful\n")
 
 ######################################
