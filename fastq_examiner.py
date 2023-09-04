@@ -67,8 +67,6 @@ def trim_empty(seqs):
 def main():
 	args = get_args()
 	seqs = []
-
-	#import pdb; pdb.set_trace()	
 	for file in [ *args.fastq_1, args.fastq_2, args.fastq_3 ]:
 		if file:
 			seqs.append(pis.put_in_struct(file))
@@ -79,10 +77,10 @@ def main():
 	mf.pair_and_order_files(seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
+	#generate_file_summary_table(seqs)
 	generate_summary_table(seqs)
 	if not args.nv:
 		rg.run_graphs(args.plot_num, seqs)
-	print("Run Successful\n")
 
 ######################################
 #  Call Main
