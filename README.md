@@ -19,11 +19,13 @@ I have written a series of tests to demonstrate this functionality of this proje
 cd ./src
 bash check_dependencies.sh
 #Running demo/tests (from base directory):
-bash run_test.sh [ 0 - 17 ]
+bash run_test.sh [0 - 17]
 ```
-Check and install any missing python libraries using the `./src/check_dependencies.sh` script. 
 Use the run_test.sh script with a number between 0-17 to run demo tests.
+### Dependencies:
+Check and install any missing python libraries using the `./src/check_dependencies.sh` script.
 
+### References:
 **I used the following tool to quickly make some random fastq files to play with during development:** <br />
 M. Frampton, R. Houlston (2012) Generation of Artificial FASTQ Files to Evaluate the Performance of Next-Generation Sequencing Pipelines.
 *PLoS ONE* 7 (11), http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0049110
