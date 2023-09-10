@@ -118,3 +118,87 @@ if [ $1 -eq 17 ];
 then
 	./fastq_examiner.py -f1 ./test_files/wrapped_reads/wrap18_F.fq -f2 ./test_files/wrapped_reads/wrap18_R.fq -leaf
 fi
+
+###################################
+##    leafed singleton tests:    ##
+###################################
+
+if [ $1 -eq 18 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_singleton/leafed.fq -nv
+fi
+
+#################################
+##    leafed wrapped tests:    ##
+#################################
+
+if [ $1 -eq 19 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped/wrap15.fq -nv
+fi
+
+if [ $1 -eq 20 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped/wrap20.fq -nv
+fi
+
+if [ $1 -eq 21 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped/wrap25.fq -nv
+fi
+
+if [ $1 -eq 22 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped/wrap30.fq -nv
+fi
+
+###########################################
+##    leafed wrapped singleton tests:    ##
+###########################################
+
+if [ $1 -eq 23 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons/wrap15.fq -nv
+fi
+
+if [ $1 -eq 24 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons/wrap20.fq -nv
+fi
+
+if [ $1 -eq 24 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons/wrap25.fq -nv
+fi
+
+if [ $1 -eq 25 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons/wrap30.fq -nv
+fi
+
+#################################################
+##    leafed wrapped singleton error tests:    ##
+#################################################
+
+if [ $1 -eq 26 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons_errors/wrap15.fq -nv
+fi
+
+if [ $1 -eq 27 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons_errors/wrap20.fq -nv
+fi
+
+if [ $1 -eq 28 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons_errors/wrap25.fq -nv
+fi
+
+if [ $1 -eq 29 ];
+then
+	./fastq_examiner.py ./test_files/combo_reads/leafed_wrapped_singletons_errors/wrap30.fq -nv
+fi
+
+
+
