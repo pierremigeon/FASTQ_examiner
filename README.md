@@ -19,7 +19,7 @@ I have written a series of tests to demonstrate this functionality of this proje
 cd ./src
 bash check_dependencies.sh
 #Running demo/tests (from base directory):
-bash run_test.sh [0 - 17]
+bash run_test.sh [0 - 29]
 ```
 Use the run_test.sh script with a number between 0-17 to run demo tests.
 ### Dependencies:
