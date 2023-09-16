@@ -44,6 +44,7 @@ def output_processed_reads(seqs, leaf_flag):
 		f.close()
 
 def split_leafed(seqs):
+	import pdb; pdb.set_trace()
 	new_seqs = []
 	for i in range(0, len(seqs)):
 		if seqs[i][0]["leafed"]:

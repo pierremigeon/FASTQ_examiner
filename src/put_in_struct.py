@@ -176,7 +176,7 @@ def line_same_type(info, lines, i, new_line):
 	return True
 
 def get_direction(lines):
-	if lines[0] and lines[1] or not lines[0] and not lines[1]:
+	if not lines[0] and not lines[1]:
 		return "None"
 	if lines[0]:
 		return "Forward"
@@ -217,7 +217,6 @@ def init_line(line, i):
 # Place each file into array of dictionaries
 #############################################
 def put_in_struct(file_name):
-	#import pdb; pdb.set_trace()
 	file = open(file_name, 'r')
 	info = get_info(file)
 	lines = init_lines_metadata_dictionary(file_name, info)

@@ -65,6 +65,7 @@ def trim_empty(seqs):
 #  Main
 ######################################
 def main():
+	#import pdb; pdb.set_trace()
 	args = get_args()
 	seqs = []
 	for file in [ *args.fastq_1, args.fastq_2, args.fastq_3 ]:
@@ -74,7 +75,10 @@ def main():
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	seqs = mf.split_leafed(seqs)
+	#import pdb; pdb.set_trace()
 	mf.pair_and_order_files(seqs)
+	for seq in seqs:
+		print(seq[0])
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
 	#generate_file_summary_table(seqs)
