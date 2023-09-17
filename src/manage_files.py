@@ -44,13 +44,12 @@ def output_processed_reads(seqs, leaf_flag):
 		f.close()
 
 def split_leafed(seqs):
-	import pdb; pdb.set_trace()
 	new_seqs = []
 	for i in range(0, len(seqs)):
 		if seqs[i][0]["leafed"]:
 			seqs[i][0]["middle"] += 1
 			new_seqs.append(seqs[i][0:seqs[i][0]["middle"]])
-			new_seqs.append([seqs[i][0]] + seqs[i][seqs[i][0]["middle"]:])
+			new_seqs.append([seqs[i][0].copy()] + seqs[i][seqs[i][0]["middle"]:])
 		else:
 			new_seqs = seqs 
 		return new_seqs
@@ -114,3 +113,13 @@ def pair_and_order_files(seqs):
 			seqs.append(seqs.pop(i))
 		else:
 			seqs[i][0]["paired"] = True
+
+def pair_files(seqs):
+	seqs.sort(key=lambda x: x[0]['head'])
+	for i in reversed(range(0, len(seqs))):
+		if seqs[i][0]["paired"] == False:
+			if compare_keys(seqs, i, "head"):
+				seqs[i][0]["paired"] = True
+				if seqs[i][1][0][-2:] == "/2":
+					seqs[i][0]['direction'] = "Reverse"
+		
