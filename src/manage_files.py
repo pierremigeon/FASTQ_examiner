@@ -43,20 +43,22 @@ def output_processed_reads(seqs, leaf_flag):
 			f.write('\n'.join(chain.from_iterable(seqs[j][1:len(seqs[j])])) + '\n')
 		f.close()
 
-
 def slice_Dict1(seqs):
-	seqs[0]["headers"] = {k:v for k,v in seqs[0]["headers"].iteritems() if v > middle} 
+	middle = seqs["middle"] - 1
+	seqs["headers"] = {k:v for k,v in seqs["headers"].items() if v < middle} 
+	return seqs
 
 def slice_Dict2(seqs):
-	seqs[0]["headers"] = {k:v for k,v in seqs[0]["headers"].iteritems() if v > middle}	
-
+	middle = seqs["middle"] - 1
+	seqs["headers"] = {k:v for k,v in seqs["headers"].items() if v >= middle}
+	return seqs
 
 def split_leafed(seqs):
 	new_seqs = []
 	for i in range(0, len(seqs)):
 		if seqs[i][0]["leafed"]:
 			seqs[i][0]["middle"] += 1
-			new_seqs.append(slice_Dict1(seqs[i][0:seqs[i][0]["middle"]]))
+			new_seqs.append([slice_Dict1(seqs[i][0].copy())] + seqs[i][1:seqs[i][0]["middle"]])
 			new_seqs.append([slice_Dict2(seqs[i][0].copy())] + seqs[i][seqs[i][0]["middle"]:])
 		else:
 			new_seqs = seqs 
@@ -66,7 +68,7 @@ def split_leafed(seqs):
 #How should the program handle this type of input? Probably want to indicate to the user repeated files 
 #probably want to just retain one of the files for analysis.
 
-defremove_singletons(seqs):
+def remove_singletons(seqs):
 	names, sets, out = [], [], []
 	for i in range(0, len(seqs), 2):
 		if seqs[i][0]["paired"] == False:
