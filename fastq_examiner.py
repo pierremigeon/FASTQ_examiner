@@ -76,6 +76,7 @@ def main():
 	mf.pair_and_order_files(seqs)
 	seqs = mf.split_leafed(seqs)
 	mf.pair_files(seqs)
+	import pdb; pdb.set_trace()
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
 	#generate_file_summary_table(seqs)
