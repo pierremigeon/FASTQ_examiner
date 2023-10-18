@@ -67,6 +67,7 @@ def trim_empty(seqs):
 def main():
 	args = get_args()
 	seqs = []
+	import pdb; pdb.set_trace()
 	for file in [ *args.fastq_1, args.fastq_2, args.fastq_3 ]:
 		if file:
 			seqs.append(pis.put_in_struct(file))
@@ -74,7 +75,6 @@ def main():
 		sys.exit("Either all input files are empty, or all reads have errors! exiting...")
 	seqs = trim_empty(seqs)
 	mf.pair_and_order_files(seqs)
-	#import pdb; pdb.set_trace()
 	seqs = mf.split_leafed(seqs)
 	mf.pair_files(seqs)
 	mf.remove_singletons(seqs)

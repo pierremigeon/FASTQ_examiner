@@ -37,7 +37,6 @@ def init_array(line):
 	return [line.rstrip(), "", "", "", ]
 
 def error_out(lines, file_name, error_lines):
-	lines[0]["error_reads"] = 0;
 	if len(error_lines) == 0:
 		return
 	read_count = 0 
@@ -129,7 +128,6 @@ def set_values(o_len, h_len, p_len, header, plus, leafed):
 	o_len = max(set(o_len), key=o_len.count)
 	h_len = max(set(h_len), key=h_len.count)
 	p_len = max(set(p_len), key=p_len.count)
-	#import pdb; pdb.set_trace()
 	header = get_common_string(header, "@")
 	plus = get_common_string(plus, "+")
 	#leafed = check_leaf_status(leafed)
@@ -163,6 +161,8 @@ def check_type(line):
 	return "Qual"
 
 def line_same_type(info, lines, i, new_line):
+	if len(lines) < 2:
+		return True
 	old_line = lines[-1][i]
 	type = info[6]["last_line_type"]
 	if type == "Plus" and i == 3:
@@ -183,12 +183,14 @@ def get_direction(lines):
 	return "Reverse"
 
 def init_lines_metadata_dictionary(file_name, info):
-	return [{"filename":file_name, "headers":{}, \
+	return [{"filename":file_name, "headers":{}, 'error_reads':0, 'comments': "",\
 		"head":info[3], "leafed":check_leaf_status(info[5]), "middle":0, \
 		"wrapped":0, "singletons":0, "direction":get_direction(info[5])}]
 
 def place_read_in_order(lines, line, i, info):
-	if info[6]["last_line_type"] == "Header":
+	if i < 1 and len(lines) == 1:
+		lines.append(init_array(line))
+	elif info[6]["last_line_type"] == "Header":
 		if line[-3:-1] == "/1":
 			info[6]["forward"] = True
 			lines[0]["middle"] += 1
@@ -207,12 +209,6 @@ def fresh_info(info):
 	info[6]['forward'] = False
 	return info
 
-def init_line(line, i):
-	if i >= 0:
-		return False
-	if not re.match('^@', line):
-		return True
-
 #############################################
 # Place each file into array of dictionaries
 #############################################
@@ -224,9 +220,10 @@ def put_in_struct(file_name):
 	i = -1
 	file.seek(0)
 
+	#import pdb; pdb.set_trace()
 	for line in file:
-		if init_line(line, i):
-			error_lines.append(line)
+		if line[0] == '#' and i == -1:
+			lines[0]['comments'] += line
 			continue
 		if is_header(line, info):
 			i = 0
@@ -243,4 +240,5 @@ def put_in_struct(file_name):
 	file.close()
 	handle_error(lines, error_lines)
 	error_out(lines, file_name, error_lines)
+	print(lines[0]['error_reads'])
 	return (lines)
