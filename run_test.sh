@@ -47,7 +47,7 @@ fi
 #standard run paired reads with graphical output
 if [ $1 -eq 6 ];
 then 
-	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq
+	./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq
 fi
 
 #standard run paired reads with graphical output and individual graphs (by file)

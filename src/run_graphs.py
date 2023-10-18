@@ -140,8 +140,7 @@ def percent_gc(seqs, file_plots):
 ######################################
 #  Quality/Base Graph Functions
 ######################################
-# I think this portion might be faulty in terms of accuracy, need to review more soon. 
-def plot_quality_by_base(sum, file_name):
+def plot_count_by_quality(sum, file_name):
 	plt.plot(sum[0:], color = 'mediumblue', linewidth=2)
 	plt.title("Count of Reads Per Quality Score for %s" % os.path.basename(file_name))
 	plt.xlabel("Quality Score")
@@ -176,13 +175,25 @@ def get_encoding(seqs):
 			elif max > k:
 				return (64)
 
-def quality_by_base(seqs, print_num):
+#don't perform sum graphs when files with different encoding types are included
+#this doesn't produce sum graphs, actually
+def readcounts_by_quality(seqs, print_num):
+	#import pdb; pdb.set_trace();
 	sum = np.zeros((45,), dtype=int)
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
 		for entry in range(1, len(seqs[file])):
 			sum[average_qual(seqs[file][entry][3], encoding)] += 1
-		plot_quality_by_base(sum, seqs[file][0]["filename"])
+		plot_count_by_quality(sum, seqs[file][0]["filename"])
+
+def quality_by_base(seqs, print_num):
+	encoding = get_encoding(seqs[file])
+	for file in range(len(seqs)):
+		sum = np.zeros((len(seqs[file]),45), dtype=int)
+		for entry in range(1, len(seqs(file))):
+			for i, base in seqs[file][entry][3].enumerate():
+				sum[entry][i] = base
+		plot_quality_by_base(sum, seqs[file][0]["filename"]);
 
 ######################################
 #  	Run Quality Graphs
@@ -194,4 +205,9 @@ def run_graphs(print_num, seqs):
 	plot_total_ns(total_ns, "")
 	percent_gc(seqs, print_num)
 	number_of_x_length(seqs, print_num)
+	readcounts_by_quality(seqs, print_num)
 	quality_by_base(seqs, print_num)
+	
+
+
+
