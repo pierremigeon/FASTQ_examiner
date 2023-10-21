@@ -187,13 +187,14 @@ def readcounts_by_quality(seqs, print_num):
 		plot_count_by_quality(sum, seqs[file][0]["filename"])
 
 def quality_by_base(seqs, print_num):
-	encoding = get_encoding(seqs[file])
+#	import pdb; pdb.set_trace();
 	for file in range(len(seqs)):
-		sum = np.zeros((len(seqs[file]),45), dtype=int)
-		for entry in range(1, len(seqs(file))):
-			for i, base in seqs[file][entry][3].enumerate():
-				sum[entry][i] = base
-		plot_quality_by_base(sum, seqs[file][0]["filename"]);
+		encoding = get_encoding(seqs[file])
+		sum = np.zeros((100, len(seqs[file])), dtype=int)
+		for entry in range(1, len(seqs[file]) - 1):
+			for i, base in enumerate(seqs[file][entry][3]):
+				sum[i][entry] = average_qual(base, encoding)
+		#plot_quality_by_base(sum, seqs[file][0]["filename"]);
 
 ######################################
 #  	Run Quality Graphs
