@@ -186,6 +186,16 @@ def readcounts_by_quality(seqs, print_num):
 			sum[average_qual(seqs[file][entry][3], encoding)] += 1
 		plot_count_by_quality(sum, seqs[file][0]["filename"])
 
+def plot_quality_by_base(sum, file_name):
+	plt.boxplot(sum[0:])
+	plt.title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
+	plt.xlabel("Base")
+	plt.ylabel("Quality distribution")
+	plt.minorticks_on()
+	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
+	plt.show()
+
 def quality_by_base(seqs, print_num):
 #	import pdb; pdb.set_trace();
 	for file in range(len(seqs)):
@@ -194,7 +204,7 @@ def quality_by_base(seqs, print_num):
 		for entry in range(1, len(seqs[file]) - 1):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[i][entry] = average_qual(base, encoding)
-		#plot_quality_by_base(sum, seqs[file][0]["filename"]);
+		plot_quality_by_base(sum, seqs[file][0]["filename"]);
 
 ######################################
 #  	Run Quality Graphs
@@ -208,7 +218,3 @@ def run_graphs(print_num, seqs):
 	number_of_x_length(seqs, print_num)
 	readcounts_by_quality(seqs, print_num)
 	quality_by_base(seqs, print_num)
-	
-
-
-
