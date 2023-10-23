@@ -41,7 +41,7 @@ def summarize_ns(file, plot_number):
 		if j > max_length:
 			max_length = j
 	if plot_number:
-		plot_ns(N_count, os.path.basename(file_name))
+		plot_total_ns(N_count, os.path.basename(file_name))
 	return(N_count)
 
 ##########################################################
@@ -187,7 +187,8 @@ def readcounts_by_quality(seqs, print_num):
 		plot_count_by_quality(sum, seqs[file][0]["filename"])
 
 def plot_quality_by_base(sum, file_name):
-	plt.boxplot(sum[0:])
+	#import pdb; pdb.set_trace();
+	plt.boxplot(sum, showfliers=False)
 	plt.title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
 	plt.xlabel("Base")
 	plt.ylabel("Quality distribution")
@@ -200,10 +201,10 @@ def quality_by_base(seqs, print_num):
 #	import pdb; pdb.set_trace();
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
-		sum = np.zeros((100, len(seqs[file])), dtype=int)
+		sum = np.zeros((len(seqs[file]), 80), dtype=int)
 		for entry in range(1, len(seqs[file]) - 1):
 			for i, base in enumerate(seqs[file][entry][3]):
-				sum[i][entry] = average_qual(base, encoding)
+				sum[entry][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);
 
 ######################################
