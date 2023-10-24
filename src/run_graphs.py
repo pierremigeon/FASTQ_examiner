@@ -199,13 +199,19 @@ def plot_quality_by_base(sum, file_name):
 
 def quality_by_base(seqs, print_num):
 #	import pdb; pdb.set_trace();
+	t_sum = []
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
 		sum = np.zeros((len(seqs[file]), 80), dtype=int)
+		if not len(t_sum):
+			t_sum = sum
+		else:
+			t_sum += sum
 		for entry in range(1, len(seqs[file]) - 1):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[entry][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);
+	plot_quality_by_base(sum, "All Files");
 
 ######################################
 #  	Run Quality Graphs
