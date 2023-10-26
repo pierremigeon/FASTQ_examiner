@@ -50,6 +50,12 @@ then
 	./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq
 fi
 
+#standard run paired reads with graphical output
+if [ $1 -eq -1 ];
+then 
+	./fastq_examiner.py -f1 ./test_files/subsample2.C1.1.fastq -f2 ./test_files/subsample2.C1.2.fastq
+fi
+
 #standard run paired reads with graphical output and individual graphs (by file)
 if [ $1 -eq 7 ];
 then 

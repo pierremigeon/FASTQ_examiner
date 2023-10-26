@@ -170,9 +170,9 @@ def get_encoding(seqs):
 				min = char
 			if char > max:
 				max = char
-			if min < ':' or max < k:
+			if min < ':' or max < 'k':
 				return (33)
-			elif max > k:
+			elif max > 'k':
 				return (64)
 
 #don't perform sum graphs when files with different encoding types are included
@@ -188,6 +188,10 @@ def readcounts_by_quality(seqs, print_num):
 
 def plot_quality_by_base(sum, file_name):
 	#import pdb; pdb.set_trace();
+	#sum = sum[0]
+	#print(sum)
+	#print(np.transpose(sum))
+	sum = np.transpose(sum)
 	plt.boxplot(sum, showfliers=False)
 	plt.title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
 	plt.xlabel("Base")
@@ -202,11 +206,11 @@ def quality_by_base(seqs, print_num):
 	t_sum = []
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
-		sum = np.zeros((len(seqs[file]), 80), dtype=int)
+		sum = np.zeros((len(seqs[file]) - 1, 80), dtype=int)
 		t_sum = sum if not len(t_sum) else np.vstack((t_sum, sum))
-		for entry in range(1, len(seqs[file]) - 1):
+		for entry in range(1, len(seqs[file])):
 			for i, base in enumerate(seqs[file][entry][3]):
-				sum[entry][i] = average_qual(base, encoding)
+				sum[entry - 1][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);
 	plot_quality_by_base(sum, "All Files");
 
