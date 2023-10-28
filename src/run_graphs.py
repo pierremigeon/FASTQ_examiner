@@ -188,17 +188,19 @@ def readcounts_by_quality(seqs, print_num):
 
 def plot_quality_by_base(sum, file_name):
 	#import pdb; pdb.set_trace();
-	#sum = sum[0]
-	#print(sum)
-	#print(np.transpose(sum))
-	sum = np.transpose(sum)
-	plt.boxplot(sum, showfliers=False)
+	plt.xticks(rotation = 75)
+	box_plot = plt.boxplot(sum, showfliers=False, patch_artist=True)
+	for median in box_plot['medians']:
+		median.set_color('yellow')
 	plt.title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
 	plt.xlabel("Base")
 	plt.ylabel("Quality distribution")
 	plt.minorticks_on()
-	plt.grid(visible=True, which='major', color='grey', linewidth=0.2)
-	plt.grid(visible=True, which='minor', color='grey', linewidth=0.2)
+	plt.grid(visible=True, which='major', axis='y', color='grey', linewidth=0.5)
+	plt.grid(visible=True, which='minor', axis='y', color='grey', linewidth=0.3)
+	plt.axhline(30, color='red', linewidth=0.5, linestyle=':')
+	fig, ax = plt.subplots()
+	[l.set_visible(False) for (i,l) in enumerate(ax.xaxis.get_ticklabels()) if i % 2 != 0]
 	plt.show()
 
 def quality_by_base(seqs, print_num):
@@ -219,10 +221,10 @@ def quality_by_base(seqs, print_num):
 ######################################
 def run_graphs(print_num, seqs):
 	total_ns = np.zeros((1500,), dtype=float)
-	for file in seqs:
-		total_ns += summarize_ns(file, print_num)
-	plot_total_ns(total_ns, "")
-	percent_gc(seqs, print_num)
-	number_of_x_length(seqs, print_num)
-	readcounts_by_quality(seqs, print_num)
+	#for file in seqs:
+	#	total_ns += summarize_ns(file, print_num)
+	#plot_total_ns(total_ns, "")
+	#percent_gc(seqs, print_num)
+	#number_of_x_length(seqs, print_num)
+	#readcounts_by_quality(seqs, print_num)
 	quality_by_base(seqs, print_num)
