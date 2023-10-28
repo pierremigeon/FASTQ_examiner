@@ -188,27 +188,31 @@ def readcounts_by_quality(seqs, print_num):
 
 def plot_quality_by_base(sum, file_name):
 	#import pdb; pdb.set_trace();
-	plt.xticks(rotation = 75)
-	box_plot = plt.boxplot(sum, showfliers=False, patch_artist=True)
+	#plt.xticks(rotation = 75)
+	fig, ax = plt.subplots()
+	box_plot = ax.boxplot(sum, showfliers=False, patch_artist=True)
 	for median in box_plot['medians']:
 		median.set_color('yellow')
-	plt.title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
-	plt.xlabel("Base")
-	plt.ylabel("Quality distribution")
-	plt.minorticks_on()
-	plt.grid(visible=True, which='major', axis='y', color='grey', linewidth=0.5)
-	plt.grid(visible=True, which='minor', axis='y', color='grey', linewidth=0.3)
-	plt.axhline(30, color='red', linewidth=0.5, linestyle=':')
-	fig, ax = plt.subplots()
 	[l.set_visible(False) for (i,l) in enumerate(ax.xaxis.get_ticklabels()) if i % 2 != 0]
+	ax.set_title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
+	ax.set_xlabel("Base")
+	ax.set_ylabel("Quality distribution")
+	fig.autofmt_xdate(rotation=75)
+	ax.minorticks_on()
+	ax.grid(visible=True, which='major', axis='y', color='grey', linewidth=0.5)
+	ax.grid(visible=True, which='minor', axis='y', color='grey', linewidth=0.3)
+	ax.axhline(30, color='red', linewidth=0.5, linestyle=':')
 	plt.show()
+
+def get_read_length(file):
+	return max([len(entry[3]) for entry in file if type(entry) != dict ])
 
 def quality_by_base(seqs, print_num):
 #	import pdb; pdb.set_trace();
 	t_sum = []
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
-		sum = np.zeros((len(seqs[file]) - 1, 80), dtype=int)
+		sum = np.zeros((len(seqs[file]) - 1, get_read_length(seqs[file])), dtype=int)
 		t_sum = sum if not len(t_sum) else np.vstack((t_sum, sum))
 		for entry in range(1, len(seqs[file])):
 			for i, base in enumerate(seqs[file][entry][3]):
