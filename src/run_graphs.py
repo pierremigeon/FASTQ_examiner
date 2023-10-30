@@ -217,8 +217,8 @@ def quality_by_base(seqs, print_num):
 		for entry in range(1, len(seqs[file])):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[entry - 1][i] = average_qual(base, encoding)
-		plot_quality_by_base(sum, seqs[file][0]["filename"]);
-	plot_quality_by_base(sum, "All Files");
+		plot_quality_by_base(sum, seqs[file][0]["filename"]);	
+	plot_quality_by_base(t_sum, "All Files");
 
 ######################################
 #  	Run Quality Graphs
