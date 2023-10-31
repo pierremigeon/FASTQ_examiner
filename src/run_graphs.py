@@ -76,21 +76,20 @@ def number_of_x_length(seqs, file_plots):
 ######################################
 #  %GC / Base Graph Functions
 ######################################
-def polish_arrays(nucleotides, max_len):
-	for base_1 in nucleotides:
-		if max_len < len(nucleotides[base_1]):
-			max_len = len(nucleotides[base_1])
+def polish_2(nucleotides):
+	max_len = max([len(nucleotides[base_1]) for base_1 in nucleotides])
 	for base_2 in nucleotides:
 		while len(nucleotides[base_2]) < max_len:
 			nucleotides[base_2] = np.append(nucleotides[base_2], 0)
+	return max_len
 
 def trim_array_ends(array):
 	while [array[i][-1] for i in array] == [0,0,0,0,0]:
 		for i, x in enumerate(array):
 			array[x] = array[x][:-1]			
 
-def plot_percent_gc(nucleotides, max_len, file_name):
-	polish_arrays(nucleotides, max_len)
+def plot_percent_gc(nucleotides, file_name):
+	max_len = polish_2(nucleotides)
 	sums = sum(nucleotides[i] for i in nucleotides)
 	sums[sums == 0] = 1
 	for letter in nucleotides:
@@ -110,14 +109,13 @@ def plot_percent_gc(nucleotides, max_len, file_name):
 	plt.show()
 
 def make_nucleotides(length):
-	nucleotides = [] 
+	nucleotides = []
 	nucleotides.append({"A" : np.zeros(length), "T" : np.zeros(length), "C" : np.zeros(length), "G" : np.zeros(length), "N" : np.zeros(length)})
 	return nucleotides
 
 #Cannot handle lowercase- convert to all caps and print notification of case change
 def percent_gc(seqs, file_plots):
 	nucleotides = make_nucleotides(len(seqs[0][1][1]))
-	max_len = 0
 	for i in (range(len(seqs))):
 		nucleotides += make_nucleotides(len(seqs[0][0]))
 		for j in (range(1, len(seqs[i]))):
@@ -130,12 +128,10 @@ def percent_gc(seqs, file_plots):
 					nucleotides[0][letter] = np.append(nucleotides[0][letter], 0)
 				nucleotides[0][letter][x] += 1
 				x += 1
-			if x >= max_len:
-				max_len = x
 		if file_plots or len(seqs) == 1:
-			plot_percent_gc(nucleotides[i + 1], max_len, seqs[i][0]['filename'])
+			plot_percent_gc(nucleotides[i + 1], seqs[i][0]['filename'])
 	if (len(nucleotides) > 2):
-		plot_percent_gc(nucleotides[0], max_len, "All Files")
+		plot_percent_gc(nucleotides[0], "All Files")
 
 ######################################
 #  Quality/Base Graph Functions
@@ -204,16 +200,33 @@ def plot_quality_by_base(sum, file_name):
 	ax.axhline(30, color='red', linewidth=0.5, linestyle=':')
 	plt.show()
 
-def get_read_length(file):
+def read_length(file):
 	return max([len(entry[3]) for entry in file if type(entry) != dict ])
+
+def array_max_len(big_array):
+	if len(big_array):
+		return max([len(big_array[array]) for array in big_array])
+
+def polish_1(reads, max_len):
+	for read in reads:
+		while len(reads[read]) < max_len:
+			reads[read] = np.append(reads[read], 0)
+
+def spool(sum, t_sum):
+	mx1 = array_max_len(sum)
+	mx2 = array_max_len(t_sum)
+	if (len(t_sum)):
+		if mx1 != mx2:
+			polish_1(sum if (mx1 < mx2) else t_sum, max(mx1, mx2))
+	return sum if not len(t_sum) else np.vstack((t_sum, sum))
 
 def quality_by_base(seqs, print_num):
 #	import pdb; pdb.set_trace();
 	t_sum = []
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
-		sum = np.zeros((len(seqs[file]) - 1, get_read_length(seqs[file])), dtype=int)
-		t_sum = sum if not len(t_sum) else np.vstack((t_sum, sum))
+		sum = np.zeros((len(seqs[file]) - 1, read_length(seqs[file])), dtype=int)
+		t_sum = spool(sum, t_sum)
 		for entry in range(1, len(seqs[file])):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[entry - 1][i] = average_qual(base, encoding)
