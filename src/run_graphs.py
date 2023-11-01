@@ -204,20 +204,25 @@ def read_length(file):
 	return max([len(entry[3]) for entry in file if type(entry) != dict ])
 
 def array_max_len(big_array):
-	if len(big_array):
-		return max([len(big_array[array]) for array in big_array])
+	if not len(big_array):
+		return	
+	return max([len(array) for array in big_array])
 
 def polish_1(reads, max_len):
-	for read in reads:
-		while len(reads[read]) < max_len:
-			reads[read] = np.append(reads[read], 0)
+	diff = max_len - len(reads[0]) 
+	reads = np.pad(reads, (0, diff), 'constant', constant_values=(0)) 
 
 def spool(sum, t_sum):
 	mx1 = array_max_len(sum)
 	mx2 = array_max_len(t_sum)
 	if (len(t_sum)):
+		#import pdb; pdb.set_trace()
 		if mx1 != mx2:
-			polish_1(sum if (mx1 < mx2) else t_sum, max(mx1, mx2))
+			if (mx1 < mx2):
+				sum = np.pad(sum, (0, abs(mx1 - mx2)), 'constant', constant_values=(0))
+			else:
+				t_sum = np.pad(t_sum, (0, abs(mx1 - mx2)), 'constant', constant_values=(0))
+			#polish_1(sum if (mx1 < mx2) else t_sum, max(mx1, mx2))
 	return sum if not len(t_sum) else np.vstack((t_sum, sum))
 
 def quality_by_base(seqs, print_num):
@@ -226,11 +231,13 @@ def quality_by_base(seqs, print_num):
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
 		sum = np.zeros((len(seqs[file]) - 1, read_length(seqs[file])), dtype=int)
-		t_sum = spool(sum, t_sum)
 		for entry in range(1, len(seqs[file])):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[entry - 1][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);	
+		t_sum = spool(sum, t_sum)
+		print(t_sum)
+		print("~~~~~~~~~")
 	plot_quality_by_base(t_sum, "All Files");
 
 ######################################
