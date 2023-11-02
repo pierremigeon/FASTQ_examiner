@@ -208,25 +208,20 @@ def array_max_len(big_array):
 		return	
 	return max([len(array) for array in big_array])
 
-def polish_1(reads, max_len):
-	diff = max_len - len(reads[0]) 
-	reads = np.pad(reads, (0, diff), 'constant', constant_values=(0)) 
+def polish_1(reads, diff):
+	if diff >= 0:
+		return reads
+	return np.pad(reads, (0, abs(diff)), 'constant', constant_values=(0))
 
 def spool(sum, t_sum):
 	mx1 = array_max_len(sum)
 	mx2 = array_max_len(t_sum)
-	if (len(t_sum)):
-		#import pdb; pdb.set_trace()
-		if mx1 != mx2:
-			if (mx1 < mx2):
-				sum = np.pad(sum, (0, abs(mx1 - mx2)), 'constant', constant_values=(0))
-			else:
-				t_sum = np.pad(t_sum, (0, abs(mx1 - mx2)), 'constant', constant_values=(0))
-			#polish_1(sum if (mx1 < mx2) else t_sum, max(mx1, mx2))
+	if (len(t_sum)) and mx1 != mx2:
+		sum = polish_1(sum, mx1 - mx2)
+		t_sum = polish_1(t_sum, mx2 - mx1)
 	return sum if not len(t_sum) else np.vstack((t_sum, sum))
 
 def quality_by_base(seqs, print_num):
-#	import pdb; pdb.set_trace();
 	t_sum = []
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
@@ -236,8 +231,6 @@ def quality_by_base(seqs, print_num):
 				sum[entry - 1][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);	
 		t_sum = spool(sum, t_sum)
-		print(t_sum)
-		print("~~~~~~~~~")
 	plot_quality_by_base(t_sum, "All Files");
 
 ######################################
