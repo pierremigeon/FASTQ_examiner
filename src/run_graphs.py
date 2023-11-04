@@ -7,6 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import manage_files as mf 
 
 #############################################
 ## %N Basecalls / Base Graph Functions
@@ -223,6 +224,7 @@ def spool(sum, t_sum):
 
 def quality_by_base(seqs, print_num):
 	t_sum = []
+	p_sum = [[]]
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
 		sum = np.zeros((len(seqs[file]) - 1, read_length(seqs[file])), dtype=int)
@@ -230,7 +232,14 @@ def quality_by_base(seqs, print_num):
 			for i, base in enumerate(seqs[file][entry][3]):
 				sum[entry - 1][i] = average_qual(base, encoding)
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);	
+		if seqs[file][0]['paired']:
+			p_sum[-1].append(sum)
+		if len(p_sum[-1]) == 2:
+			p_sum[-1][0] = spool(p_sum[-1][0], p_sum[-1][1])
+			p_sum.append([])
 		t_sum = spool(sum, t_sum)
+	for pair in p_sum:
+		plot_quality_by_base(pair, "Pair Files");
 	plot_quality_by_base(t_sum, "All Files");
 
 ######################################
