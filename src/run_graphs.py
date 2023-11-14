@@ -7,7 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import manage_files as mf 
+#import manage_files as mf 
 
 #############################################
 ## %N Basecalls / Base Graph Functions
@@ -235,12 +235,15 @@ def quality_by_base(seqs, print_num):
 		if seqs[file][0]['paired']:
 			p_sum[-1].append(sum)
 		if len(p_sum[-1]) == 2:
-			p_sum[-1][0] = spool(p_sum[-1][0], p_sum[-1][1])
+			p_sum[-1] = spool(p_sum[-1][0], p_sum[-1][1])
 			p_sum.append([])
 		t_sum = spool(sum, t_sum)
-	for pair in p_sum:
-		plot_quality_by_base(pair, "Pair Files");
-	plot_quality_by_base(t_sum, "All Files");
+	p_sum.pop()
+	if print_num and len(p_sum) > 1:
+		for pair in p_sum:
+			plot_quality_by_base(pair, "Pair Files");
+	if print_num:
+		plot_quality_by_base(t_sum, "All Files");
 
 ######################################
 #  	Run Quality Graphs
