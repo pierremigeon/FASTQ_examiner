@@ -191,7 +191,9 @@ def plot_quality_by_base(sum, file_name):
 	for median in box_plot['medians']:
 		median.set_color('yellow')
 	[l.set_visible(False) for (i,l) in enumerate(ax.xaxis.get_ticklabels()) if i % 2 != 0]
-	ax.set_title("Quality Score distribution by Base for %s" % os.path.basename(file_name))
+	title = "Pair Files: " + os.path.basename(file_name).split('.')[0] if "Pair Files:"\
+		in file_name else os.path.basename(file_name)
+	ax.set_title("Quality Score distribution by Base for %s" % title)
 	ax.set_xlabel("Base")
 	ax.set_ylabel("Quality distribution")
 	fig.autofmt_xdate(rotation=75)
@@ -224,7 +226,7 @@ def spool(sum, t_sum):
 
 def quality_by_base(seqs, print_num):
 	t_sum = []
-	p_sum = [[]]
+	p_sum = [{0 : ""}, []]
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
 		sum = np.zeros((len(seqs[file]) - 1, read_length(seqs[file])), dtype=int)
@@ -234,14 +236,16 @@ def quality_by_base(seqs, print_num):
 		plot_quality_by_base(sum, seqs[file][0]["filename"]);	
 		if seqs[file][0]['paired']:
 			p_sum[-1].append(sum)
+			p_sum[0][len(p_sum) - 1] = seqs[file][0]['filename']
 		if len(p_sum[-1]) == 2:
 			p_sum[-1] = spool(p_sum[-1][0], p_sum[-1][1])
 			p_sum.append([])
 		t_sum = spool(sum, t_sum)
 	p_sum.pop()
-	if print_num and len(p_sum) > 1:
-		for pair in p_sum:
-			plot_quality_by_base(pair, "Pair Files");
+	if print_num and len(p_sum) > 2:
+		for i, pair in enumerate(p_sum):
+			if i > 0:
+				plot_quality_by_base(pair, "Pair Files: " + p_sum[0][i]);
 	if print_num:
 		plot_quality_by_base(t_sum, "All Files");
 
