@@ -32,7 +32,7 @@ fi
 #input f/r fastq with no flags, as positional arguments, more than 2 input files, 4 distinct pairs:
 if [ $1 -eq -2 ];
 then 
-	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq -f 
+	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/SRR26804752_top1000.fastq -f 
 fi
 
 #no visual test
