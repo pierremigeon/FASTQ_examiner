@@ -242,7 +242,8 @@ def quality_by_base(seqs, print_num):
 			p_sum.append([])
 		t_sum = spool(sum, t_sum)
 	p_sum.pop()
-	if print_num and len(p_sum) > 2:
+	#import pdb;pdb.set_trace()
+	if print_num and len(p_sum) > 2 or len(seqs) > 2:
 		for i, pair in enumerate(p_sum):
 			if i > 0:
 				plot_quality_by_base(pair, "Pair Files: " + p_sum[0][i]);
