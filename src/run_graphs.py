@@ -175,7 +175,6 @@ def get_encoding(seqs):
 #don't perform sum graphs when files with different encoding types are included
 #this doesn't produce sum graphs, actually
 def readcounts_by_quality(seqs, print_num):
-	#import pdb; pdb.set_trace();
 	sum = np.zeros((45,), dtype=int)
 	for file in range(len(seqs)):
 		encoding = get_encoding(seqs[file])
@@ -184,7 +183,6 @@ def readcounts_by_quality(seqs, print_num):
 		plot_count_by_quality(sum, seqs[file][0]["filename"])
 
 def plot_quality_by_base(sum, file_name):
-	#import pdb; pdb.set_trace();
 	#plt.xticks(rotation = 75)
 	fig, ax = plt.subplots()
 	box_plot = ax.boxplot(sum, showfliers=False, patch_artist=True)
@@ -242,7 +240,6 @@ def quality_by_base(seqs, print_num):
 			p_sum.append([])
 		t_sum = spool(sum, t_sum)
 	p_sum.pop()
-	#import pdb;pdb.set_trace()
 	if print_num and len(p_sum) > 2 or len(seqs) > 2:
 		for i, pair in enumerate(p_sum):
 			if i > 0:
