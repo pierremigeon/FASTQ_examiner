@@ -33,8 +33,12 @@ then
 	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq -f -nv
 fi
 
-#no visual test
-
+#input f/r fastq with no flags, as positional arguments, more than 2 input files, 4 distinct pairs, 2 pairs and one singleton:
+if [ $1 -eq -2 ];
+then 
+	echo ./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/SRR26804752_top1000.fastq ./test_files/testA_files/test1.fastq ./test_files/testA_files/test2.fastq -f 
+	./fastq_examiner.py ./test_files/C1.1.fastq ./test_files/C1.2.fastq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/singleton_reads/singleton_test_f1.fq ./test_files/SRR26804752_top1000.fastq ./test_files/testA_files/test1.fastq ./test_files/testA_files/test2.fastq -f 
+fi
 
 #no visual test
 if [ $1 -eq 4 ];
@@ -53,8 +57,15 @@ fi
 #standard run paired reads with graphical output
 if [ $1 -eq 6 ];
 then
-	echo ./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq
-	./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq
+	echo ./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq
+	./fastq_examiner.py -f1 ./test_files/subsample.C1.1.fastq -f2 ./test_files/subsample.C1.2.fastq
+fi
+
+#standard run paired reads with graphical output
+if [ $1 -eq -1 ];
+then
+	echo ./fastq_examiner.py -f1 ./test_files/subsample2.C1.1.fastq -f2 ./test_files/subsample2.C1.2.fastq
+	./fastq_examiner.py -f1 ./test_files/subsample2.C1.1.fastq -f2 ./test_files/subsample2.C1.2.fastq
 fi
 
 #standard run paired reads with graphical output and individual graphs (by file)
