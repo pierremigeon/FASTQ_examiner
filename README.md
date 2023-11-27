@@ -9,7 +9,15 @@ FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ 
 # Example command for demonstration purposes:
 ./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i
 ```
+The tool generates numerous sumary statistics and graphs for input fastq files. It can also help determine different relationships between files, such as paired status, and sorts and pairs files automatically regardless of input order.
 
+Summary table:
+
+<img width="585" alt="Screen Shot 2023-11-27 at 8 17 12 AM" src="https://github.com/pierremigeon/FASTQ_examiner/assets/107828529/ca1965f1-dd8d-4854-94fe-575d23660723">
+
+
+Distribution of Quality scores over each base (all reads):
+<img width="1132" alt="Screen Shot 2023-11-27 at 8 11 42 AM" src="https://github.com/pierremigeon/FASTQ_examiner/assets/107828529/3134aeb3-67f0-4a25-a019-a7b5fc669162">
 Diagnostic graphs produced can be useful for understanding fastq data quality or other status. For example, extreme 5' nucleotide bias in this case suggests sequencing adapters have yet to be removed:
 ![graph](https://user-images.githubusercontent.com/8321639/70365885-95504880-1848-11ea-9321-5fb1756d2e7f.png)
 
