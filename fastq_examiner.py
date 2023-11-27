@@ -77,7 +77,6 @@ def main():
 	mf.pair_and_order_files(seqs)
 	mf.remove_singletons(seqs)
 	mf.output_processed_reads(seqs, args.leaf)
-	#generate_file_summary_table(seqs)
 	generate_summary_table(seqs)
 	if not args.nv:
 		rg.run_graphs(args.plot_num, seqs)
