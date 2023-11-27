@@ -252,10 +252,10 @@ def quality_by_base(seqs, print_num):
 ######################################
 def run_graphs(print_num, seqs):
 	total_ns = np.zeros((1500,), dtype=float)
-	#for file in seqs:
-	#	total_ns += summarize_ns(file, print_num)
-	#plot_total_ns(total_ns, "")
-	#percent_gc(seqs, print_num)
-	#number_of_x_length(seqs, print_num)
-	#readcounts_by_quality(seqs, print_num)
+	for file in seqs:
+		total_ns += summarize_ns(file, print_num)
+	plot_total_ns(total_ns, "")
+	percent_gc(seqs, print_num)
+	number_of_x_length(seqs, print_num)
+	readcounts_by_quality(seqs, print_num)
 	quality_by_base(seqs, print_num)

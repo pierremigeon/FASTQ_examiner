@@ -1,8 +1,38 @@
 #!/bin/bash
-####################
-##  Old tests...  ##
-####################
+#######################################
+ ##  	Just some tests...  	    ##
+ ##	  Pierre Migeon		    ##
+ ##	11/27/23 updated 	    ##
+ ## "bash run_test.sh all" runs all ##
+#######################################
 
+##################
+# Error handling #
+##################
+if [ $1 == "all" ];
+then
+	for i in {-2..29}; do
+		bash run_test.sh $i;
+	done;
+	exit;
+fi
+
+if [[ $1 == [A-Za-z] ]];
+then
+	echo "Not a valid test";
+	exit;
+fi
+
+if [ $1 < -2 -o $1 > 29 ];
+then
+	echo "Not a valid test";
+	exit;
+fi
+
+
+####################
+# Tests Begin Here #
+####################
 #input f/r fastq with no flags, as positional arguments, no input files
 if [ $1 -eq 0 ];
 then 
