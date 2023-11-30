@@ -32,6 +32,7 @@ def handle_error(lines, error_lines):
 		lines[0]["middle"] -= 1
 	else:
 		lines[0]["headers"][lines[-1][0]] = len(lines) - 2
+		lines[0]["seq_lens"].append(len(lines[-1][1]))
 
 def init_array(line):
 	return [line.rstrip(), "", "", "", ]
@@ -183,7 +184,7 @@ def get_direction(lines):
 	return "Reverse"
 
 def init_lines_metadata_dictionary(file_name, info):
-	return [{"filename":file_name, "headers":{}, \
+	return [{"filename":file_name, "headers":{}, "seq_lens": [],\
 		"head":info[3], "leafed":check_leaf_status(info[5]), "middle":0, \
 		"wrapped":0, "singletons":0, "direction":get_direction(info[5])}]
 
