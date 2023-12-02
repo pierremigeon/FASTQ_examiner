@@ -9,10 +9,9 @@ from prettytable import PrettyTable
 
 def calc_base_pairs(seqs):
 	raw_len = sum(seqs[0]["seq_lens"])
-	print(raw_len)
-	raw_len = round(raw_len, -len(str(raw_len)) + 3)
-	print(raw_len)
-	return str(raw_len)
+	raw_len = round(raw_len, -int((len(str(raw_len)) - 1) / 3) * 3)
+	raw_len = raw_len * 10 ** -(int((len(str(raw_len)) - 1) / 3) * 3)
+	return str(int(raw_len)) + " Mb"
 
 def generate_summary_table(seqs):
 	print("");
