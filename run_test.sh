@@ -23,7 +23,7 @@ then
 	exit;
 fi
 
-if [ $1 < -2 -o $1 > 29 ];
+if [ $1 -lt -2 -o $1 -gt 29 ];
 then
 	echo "Not a valid test";
 	exit;
