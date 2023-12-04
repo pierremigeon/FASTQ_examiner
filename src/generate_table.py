@@ -12,7 +12,8 @@ def calc_base_pairs(seqs):
 	precision = int((len(str(raw_len)) - 1) / 3) * 3
 	raw_len = round(raw_len, -precision)
 	raw_len = raw_len * 10 ** -precision
-	scale = " Tb" if precision == 12 \
+	scale = "*10^" + str(precision) if precision > 12 \
+		else " Tb" if precision == 12 \
 		else " Gb" if precision == 9 \
 		else " Mb" if precision == 6 \
 		else " Kb" if precision == 3 \
