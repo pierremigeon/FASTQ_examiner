@@ -4,7 +4,7 @@
 FASTQ examiner is a tool written in python to do basic sanity checking of FASTQ files. Files are checked for validity, wrapping, and truncation. Wrapped files are unwrapped, and any malformed or truncated entries in the FASTQ files are removed. Subsequently, sequence read summary statistics and graphs are produced.
 
 ```
-# usage: fastq_examiner.py [-h] [-v] [-e EMAIL] [-f1] FASTQ_1 [-f2 FASTQ_2] [-c] [-q] [-f] [-nv]
+# usage: fastq_examiner.py [-h] [-v] [-f1] FASTQ_1 [-f2 FASTQ_2] [-c] [-q] [-f] [-nv]
 
 # Example command for demonstration purposes:
 ./fastq_examiner.py -f1 ./test_files/C1.1.fastq -f2 ./test_files/C1.2.fastq -i
@@ -27,9 +27,9 @@ I have written a series of tests to demonstrate this functionality of this proje
 cd ./src
 bash check_dependencies.sh
 #Running demo/tests (from base directory):
-bash run_test.sh [0 - 29]
+bash run_test.sh [-2 - 29]
 ```
-Use the run_test.sh script with a number between 0-17 to run demo tests.
+Use the run_test.sh script with a number between -2 - 29 to run demo tests.
 ### Dependencies:
 Check and install any missing python libraries using the `./src/check_dependencies.sh` script.
 
